@@ -25,6 +25,8 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         ${PROJECT_SOURCES}
         singleline_import_dialog.h singleline_import_dialog.cpp
         singleline_import_dialog.h singleline_import_dialog.cpp singleline_import_dialog.ui
+        setting_dialog.h setting_dialog.cpp setting_dialog.ui
+        tablecolumns.h tablecolumns.cpp
 
 
     )

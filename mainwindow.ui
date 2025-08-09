@@ -19,12 +19,48 @@
      <rect>
       <x>60</x>
       <y>110</y>
-      <width>101</width>
+      <width>121</width>
       <height>21</height>
      </rect>
     </property>
     <property name="text">
-     <string>导入单个项目…</string>
+     <string>导入单个视频…</string>
+    </property>
+   </widget>
+   <widget class="QTableView" name="MaintableView">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>251</y>
+      <width>801</width>
+      <height>311</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="wholsoueflie_importButton">
+    <property name="geometry">
+     <rect>
+      <x>60</x>
+      <y>150</y>
+      <width>121</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>导入整个缓存源文件</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="settingButton">
+    <property name="geometry">
+     <rect>
+      <x>680</x>
+      <y>150</y>
+      <width>80</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>设置</string>
     </property>
    </widget>
   </widget>

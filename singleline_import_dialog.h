@@ -17,9 +17,7 @@ public:
 
 private slots:
     void on_VideoInputButton_clicked();
-
     void on_AudioInputButton_clicked();
-
     void on_TitlefolderButton_clicked();
 
 private:

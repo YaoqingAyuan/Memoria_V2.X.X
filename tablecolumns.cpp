@@ -1,11 +1,11 @@
 #include "tablecolumns.h"
 
 ColumnManager::ColumnManager() {
-    // 初始化列标题
+    // 初始化列标题（根据新的枚举顺序调整）
     columnNames = {
         "序号", "视频类型", "视频标题", "创建时间", "视频时长",
-        "清晰度", "视频文件导入(m4s)", "音频文件导入(m4s)",
-        "文件大小", "混流进度",
+        "文件大小", "清晰度", "混流进度",
+        "视频文件导入(m4s)", "音频文件导入(m4s)",
         "UP主", "UP主UID", "所属系列", "视频av/bv号",
         "弹幕更新时间(最近)", "最新弹幕数"
     };
@@ -15,13 +15,15 @@ ColumnManager::ColumnManager() {
 
     // 设置强制列始终显示
     setColumnVisibility(COL_INDEX, true);
+    setColumnVisibility(COL_VIDEO_TYPE, true);  // 新位置
     setColumnVisibility(COL_TITLE, true);
+    setColumnVisibility(COL_CREATE_TIME, true); // 新位置
     setColumnVisibility(COL_DURATION, true);
+    setColumnVisibility(COL_TOTAL_SIZE, true);  // 新位置
     setColumnVisibility(COL_QUALITY, true);
+    setColumnVisibility(COL_PROGRESS, true);
     setColumnVisibility(COL_VIDEO_FILE, true);
     setColumnVisibility(COL_AUDIO_FILE, true);
-    setColumnVisibility(COL_TOTAL_SIZE, true);
-    setColumnVisibility(COL_PROGRESS, true);
 
     // 设置可选列默认状态
     setColumnVisibility(COL_VIDEO_TYPE, true);      // 默认显示视频类型

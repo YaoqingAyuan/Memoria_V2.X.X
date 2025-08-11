@@ -13,11 +13,12 @@ enum TableColumns {
     COL_TITLE,          // 视频标题
     COL_CREATE_TIME,    // 创建时间 (可选，但位置固定)
     COL_DURATION,       // 视频时长
+    COL_TOTAL_SIZE,     // 文件总大小
     COL_QUALITY,        // 清晰度描述
+    COL_PROGRESS,       // 混流进度条
+
     COL_VIDEO_FILE,     // 视频.m4s文件导入
     COL_AUDIO_FILE,     // 音频.m4s文件导入
-    COL_TOTAL_SIZE,     // 文件总大小
-    COL_PROGRESS,       // 混流进度条
 
     // 可选显示列 (8列)
     COL_UP_NAME,        // UP主昵称 (在进度条后)

@@ -46,14 +46,14 @@ Setting_Dialog::Setting_Dialog(ColumnManager* columnManager, QWidget *parent)
     // 连接信号槽
     connect(ui->buttonBox, &QDialogButtonBox::accepted, this, &Setting_Dialog::onAccepted);
 
-    // 连接全选复选框的信号
-    connect(m_selectAllCheckBox, &QCheckBox::stateChanged,
+    connect(m_selectAllCheckBox, &QCheckBox::checkStateChanged,
             this, &Setting_Dialog::onSelectAllStateChanged);
 
     // 连接所有选项复选框的信号
     for (QCheckBox* checkbox : ui->columnsContainer->findChildren<QCheckBox*>()) {
         if (checkbox != m_selectAllCheckBox) {
-            connect(checkbox, &QCheckBox::stateChanged,
+            // 替换后：
+            connect(checkbox, &QCheckBox::checkStateChanged,
                     this, &Setting_Dialog::onOptionCheckboxChanged);
         }
     }

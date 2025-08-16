@@ -20,6 +20,8 @@ set(PROJECT_SOURCES
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
+    find_package(Qt6 REQUIRED COMPONENTS Core)
+
     qt_add_executable(MemoriaV2
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
@@ -27,6 +29,9 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         singleline_import_dialog.h singleline_import_dialog.cpp singleline_import_dialog.ui
         setting_dialog.h setting_dialog.cpp setting_dialog.ui
         tablecolumns.h tablecolumns.cpp
+        videoitem.h videoitem.cpp
+        progressbardelegate.h progressbardelegate.cpp
+
 
 
     )
@@ -49,6 +54,7 @@ else()
 endif()
 
 target_link_libraries(MemoriaV2 PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
+target_link_libraries(MemoriaV2 PRIVATE Qt6::Core)
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
 # If you are developing for iOS or macOS you should consider setting an

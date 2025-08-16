@@ -3,7 +3,6 @@
 #include <QVector>
 #include <QStringList>
 #include <QSet>
-//列定义和顺序管理类 独立头文件：tablecolumns.h
 
 // 表格列枚举定义（按显示顺序）
 enum TableColumns {
@@ -31,7 +30,6 @@ enum TableColumns {
     TOTAL_COLUMNS       // 总列数 (16列)
 };
 
-// 列管理器类
 class ColumnManager
 {
 public:

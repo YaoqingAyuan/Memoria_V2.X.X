@@ -1,0 +1,75 @@
+# ninja log v6
+8	2382	7775605501220380	MemoriaV2_autogen/timestamp	ab33f55fd23bdcd2
+8	2382	7775605501220380	MemoriaV2_autogen/mocs_compilation.cpp	ab33f55fd23bdcd2
+8	2382	7775605501220380	D:/Qt Projects/MemoriaV2/build/Desktop_Qt_6_9_1_MinGW_64_bit-Debug/MemoriaV2_autogen/mocs_compilation.cpp	ab33f55fd23bdcd2
+2382	4712	7775605502808643	CMakeFiles/MemoriaV2.dir/MemoriaV2_autogen/mocs_compilation.cpp.obj	d3151ef09b5a8b63
+8	2382	7775605501220380	D:/Qt Projects/MemoriaV2/build/Desktop_Qt_6_9_1_MinGW_64_bit-Debug/MemoriaV2_autogen/timestamp	ab33f55fd23bdcd2
+2447	4315	7775605503429819	CMakeFiles/MemoriaV2.dir/main.cpp.obj	ac7fa80eebccc52
+2747	4664	7775605506404556	CMakeFiles/MemoriaV2.dir/playback_widge.cpp.obj	21bc6f096d6a9426
+3109	4726	7775605510065724	CMakeFiles/MemoriaV2.dir/data_models/tablecolumns.cpp.obj	47553b585894d6b6
+2982	5396	7775605508788599	CMakeFiles/MemoriaV2.dir/dialogs/singleline_import_dialog.cpp.obj	86d04c67f2109754
+3268	5099	7775605511654560	CMakeFiles/MemoriaV2.dir/data_models/videoitem.cpp.obj	378fd0278dbc4f83
+3627	5740	7775605515244559	CMakeFiles/MemoriaV2.dir/dialogs/del_setting_dialog.cpp.obj	41f114b5b96540a2
+2836	5317	7775605507334836	CMakeFiles/MemoriaV2.dir/dialogs/setting_dialog.cpp.obj	ca270fcf568760c6
+3450	5622	7775605513488755	CMakeFiles/MemoriaV2.dir/delegates/progressbardelegate.cpp.obj	88953960b29f7483
+2649	5835	7775605505438463	CMakeFiles/MemoriaV2.dir/mainwindow.cpp.obj	a55af5fe558d8ffc
+3804	5811	7775605517018068	CMakeFiles/MemoriaV2.dir/dialogs/export_setting_dialog.cpp.obj	76ba6875004e5302
+5835	6829	7775605537206071	MemoriaV2.exe	27bb7aec2ca936
+4	101	7775605474265774	CMakeFiles/clean.additional	adcc2f785672e3a3
+102	164	7775605475240512	clean	101d0f6048d5fe99
+4	106	7775607198026119	CMakeFiles/clean.additional	adcc2f785672e3a3
+106	173	7775607199038077	clean	101d0f6048d5fe99
+5	169	7775607209646954	CMakeFiles/clean.additional	adcc2f785672e3a3
+169	248	7775607211317356	clean	101d0f6048d5fe99
+8	2584	7775607238661333	MemoriaV2_autogen/timestamp	ab33f55fd23bdcd2
+8	2584	7775607238661333	MemoriaV2_autogen/mocs_compilation.cpp	ab33f55fd23bdcd2
+8	2584	7775607238661333	D:/Qt Projects/MemoriaV2/build/Desktop_Qt_6_9_1_MinGW_64_bit-Debug/MemoriaV2_autogen/timestamp	ab33f55fd23bdcd2
+8	2584	7775607238661333	D:/Qt Projects/MemoriaV2/build/Desktop_Qt_6_9_1_MinGW_64_bit-Debug/MemoriaV2_autogen/mocs_compilation.cpp	ab33f55fd23bdcd2
+2700	4433	7775607241304154	CMakeFiles/MemoriaV2.dir/main.cpp.obj	ac7fa80eebccc52
+2864	4769	7775607242919534	CMakeFiles/MemoriaV2.dir/playback_widge.cpp.obj	21bc6f096d6a9426
+3181	4838	7775607246043707	CMakeFiles/MemoriaV2.dir/data_models/tablecolumns.cpp.obj	47553b585894d6b6
+2584	4844	7775607240178811	CMakeFiles/MemoriaV2.dir/MemoriaV2_autogen/mocs_compilation.cpp.obj	d3151ef09b5a8b63
+3304	5209	7775607247363547	CMakeFiles/MemoriaV2.dir/data_models/videoitem.cpp.obj	378fd0278dbc4f83
+2963	5329	7775607243831473	CMakeFiles/MemoriaV2.dir/dialogs/setting_dialog.cpp.obj	ca270fcf568760c6
+3068	5448	7775607244981350	CMakeFiles/MemoriaV2.dir/dialogs/singleline_import_dialog.cpp.obj	86d04c67f2109754
+3482	5501	7775607249035636	CMakeFiles/MemoriaV2.dir/delegates/progressbardelegate.cpp.obj	88953960b29f7483
+3651	5634	7775607250830151	CMakeFiles/MemoriaV2.dir/dialogs/del_setting_dialog.cpp.obj	41f114b5b96540a2
+3823	5816	7775607252566064	CMakeFiles/MemoriaV2.dir/dialogs/export_setting_dialog.cpp.obj	76ba6875004e5302
+2771	5908	7775607242003023	CMakeFiles/MemoriaV2.dir/mainwindow.cpp.obj	a55af5fe558d8ffc
+5908	7060	7775607273391512	MemoriaV2.exe	27bb7aec2ca936
+4	391	7775619865631473	CMakeFiles/clean.additional	adcc2f785672e3a3
+391	563	7775619869500508	clean	101d0f6048d5fe99
+8	3142	7775619905495308	MemoriaV2_autogen/timestamp	ab33f55fd23bdcd2
+8	3142	7775619905495308	MemoriaV2_autogen/mocs_compilation.cpp	ab33f55fd23bdcd2
+8	3142	7775619905495308	D:/Qt Projects/MemoriaV2/build/Desktop_Qt_6_9_1_MinGW_64_bit-Debug/MemoriaV2_autogen/timestamp	ab33f55fd23bdcd2
+8	3142	7775619905495308	D:/Qt Projects/MemoriaV2/build/Desktop_Qt_6_9_1_MinGW_64_bit-Debug/MemoriaV2_autogen/mocs_compilation.cpp	ab33f55fd23bdcd2
+3262	5221	7775619907918465	CMakeFiles/MemoriaV2.dir/main.cpp.obj	ac7fa80eebccc52
+3625	5344	7775619911603667	CMakeFiles/MemoriaV2.dir/playback_widge.cpp.obj	21bc6f096d6a9426
+3143	5461	7775619906870949	CMakeFiles/MemoriaV2.dir/MemoriaV2_autogen/mocs_compilation.cpp.obj	d3151ef09b5a8b63
+3917	5509	7775619914611921	CMakeFiles/MemoriaV2.dir/data_models/tablecolumns.cpp.obj	47553b585894d6b6
+4073	5865	7775619916169002	CMakeFiles/MemoriaV2.dir/data_models/videoitem.cpp.obj	378fd0278dbc4f83
+3728	6127	7775619912684964	CMakeFiles/MemoriaV2.dir/dialogs/setting_dialog.cpp.obj	ca270fcf568760c6
+3814	6151	7775619913576174	CMakeFiles/MemoriaV2.dir/dialogs/singleline_import_dialog.cpp.obj	86d04c67f2109754
+4254	6243	7775619917974304	CMakeFiles/MemoriaV2.dir/delegates/progressbardelegate.cpp.obj	88953960b29f7483
+4450	6475	7775619919948553	CMakeFiles/MemoriaV2.dir/dialogs/del_setting_dialog.cpp.obj	41f114b5b96540a2
+4626	6542	7775619921706967	CMakeFiles/MemoriaV2.dir/dialogs/export_setting_dialog.cpp.obj	76ba6875004e5302
+3456	6581	7775619909973795	CMakeFiles/MemoriaV2.dir/mainwindow.cpp.obj	a55af5fe558d8ffc
+6581	7715	7775619941192534	MemoriaV2.exe	27bb7aec2ca936
+3	154	7775626143294342	CMakeFiles/clean.additional	adcc2f785672e3a3
+154	219	7775626144804861	clean	101d0f6048d5fe99
+8	2323	7775626170408993	MemoriaV2_autogen/timestamp	ab33f55fd23bdcd2
+8	2323	7775626170408993	MemoriaV2_autogen/mocs_compilation.cpp	ab33f55fd23bdcd2
+8	2323	7775626170408993	D:/Qt Projects/MemoriaV2/build/Desktop_Qt_6_9_1_MinGW_64_bit-Debug/MemoriaV2_autogen/timestamp	ab33f55fd23bdcd2
+8	2323	7775626170408993	D:/Qt Projects/MemoriaV2/build/Desktop_Qt_6_9_1_MinGW_64_bit-Debug/MemoriaV2_autogen/mocs_compilation.cpp	ab33f55fd23bdcd2
+2422	4352	7775626172621370	CMakeFiles/MemoriaV2.dir/main.cpp.obj	ac7fa80eebccc52
+2757	4484	7775626175966737	CMakeFiles/MemoriaV2.dir/playback_widge.cpp.obj	21bc6f096d6a9426
+2324	4661	7775626171661336	CMakeFiles/MemoriaV2.dir/MemoriaV2_autogen/mocs_compilation.cpp.obj	d3151ef09b5a8b63
+3105	4681	7775626179474576	CMakeFiles/MemoriaV2.dir/data_models/tablecolumns.cpp.obj	47553b585894d6b6
+3246	5124	7775626180885377	CMakeFiles/MemoriaV2.dir/data_models/videoitem.cpp.obj	378fd0278dbc4f83
+2853	5230	7775626176912023	CMakeFiles/MemoriaV2.dir/dialogs/setting_dialog.cpp.obj	ca270fcf568760c6
+2973	5351	7775626178153345	CMakeFiles/MemoriaV2.dir/dialogs/singleline_import_dialog.cpp.obj	86d04c67f2109754
+3435	5479	7775626182769281	CMakeFiles/MemoriaV2.dir/delegates/progressbardelegate.cpp.obj	88953960b29f7483
+3618	5687	7775626184604497	CMakeFiles/MemoriaV2.dir/dialogs/del_setting_dialog.cpp.obj	41f114b5b96540a2
+3797	5826	7775626186392539	CMakeFiles/MemoriaV2.dir/dialogs/export_setting_dialog.cpp.obj	76ba6875004e5302
+2606	5882	7775626174468559	CMakeFiles/MemoriaV2.dir/mainwindow.cpp.obj	a55af5fe558d8ffc
+5882	7149	7775626207097871	MemoriaV2.exe	27bb7aec2ca936

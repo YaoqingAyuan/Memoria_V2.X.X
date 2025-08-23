@@ -39,8 +39,10 @@ template <> constexpr inline auto MainWindow::qt_create_metaobjectdata<qt_meta_t
     namespace QMC = QtMocConstants;
     QtMocHelpers::StringRefStorage qt_stringData {
         "MainWindow",
-        "on_singleline_importButton_clicked",
+        "totalProgressChanged",
         "",
+        "progress",
+        "on_singleline_importButton_clicked",
         "on_wholsoueflie_importButton_clicked",
         "on_settingButton_clicked",
         "on_addlineButton_clicked",
@@ -64,41 +66,45 @@ template <> constexpr inline auto MainWindow::qt_create_metaobjectdata<qt_meta_t
     };
 
     QtMocHelpers::UintData qt_methods {
+        // Signal 'totalProgressChanged'
+        QtMocHelpers::SignalData<void(int)>(1, 2, QMC::AccessPublic, QMetaType::Void, {{
+            { QMetaType::Int, 3 },
+        }}),
         // Slot 'on_singleline_importButton_clicked'
-        QtMocHelpers::SlotData<void()>(1, 2, QMC::AccessPrivate, QMetaType::Void),
-        // Slot 'on_wholsoueflie_importButton_clicked'
-        QtMocHelpers::SlotData<void()>(3, 2, QMC::AccessPrivate, QMetaType::Void),
-        // Slot 'on_settingButton_clicked'
         QtMocHelpers::SlotData<void()>(4, 2, QMC::AccessPrivate, QMetaType::Void),
-        // Slot 'on_addlineButton_clicked'
+        // Slot 'on_wholsoueflie_importButton_clicked'
         QtMocHelpers::SlotData<void()>(5, 2, QMC::AccessPrivate, QMetaType::Void),
-        // Slot 'on_delelineButton_clicked'
+        // Slot 'on_settingButton_clicked'
         QtMocHelpers::SlotData<void()>(6, 2, QMC::AccessPrivate, QMetaType::Void),
+        // Slot 'on_addlineButton_clicked'
+        QtMocHelpers::SlotData<void()>(7, 2, QMC::AccessPrivate, QMetaType::Void),
+        // Slot 'on_delelineButton_clicked'
+        QtMocHelpers::SlotData<void()>(8, 2, QMC::AccessPrivate, QMetaType::Void),
         // Slot 'showContextMenu'
-        QtMocHelpers::SlotData<void(const QPoint &)>(7, 2, QMC::AccessPrivate, QMetaType::Void, {{
-            { QMetaType::QPoint, 8 },
+        QtMocHelpers::SlotData<void(const QPoint &)>(9, 2, QMC::AccessPrivate, QMetaType::Void, {{
+            { QMetaType::QPoint, 10 },
         }}),
         // Slot 'onCustomContextMenuAction'
-        QtMocHelpers::SlotData<void(QAction *)>(9, 2, QMC::AccessPrivate, QMetaType::Void, {{
-            { 0x80000000 | 10, 11 },
+        QtMocHelpers::SlotData<void(QAction *)>(11, 2, QMC::AccessPrivate, QMetaType::Void, {{
+            { 0x80000000 | 12, 13 },
         }}),
         // Slot 'on_outputButton_clicked'
-        QtMocHelpers::SlotData<void()>(12, 2, QMC::AccessPrivate, QMetaType::Void),
-        // Slot 'onExportSingle'
-        QtMocHelpers::SlotData<void()>(13, 2, QMC::AccessPrivate, QMetaType::Void),
-        // Slot 'onExportSelected'
         QtMocHelpers::SlotData<void()>(14, 2, QMC::AccessPrivate, QMetaType::Void),
-        // Slot 'onExportAll'
+        // Slot 'onExportSingle'
         QtMocHelpers::SlotData<void()>(15, 2, QMC::AccessPrivate, QMetaType::Void),
-        // Slot 'on_mergeStartBtn_clicked'
+        // Slot 'onExportSelected'
         QtMocHelpers::SlotData<void()>(16, 2, QMC::AccessPrivate, QMetaType::Void),
+        // Slot 'onExportAll'
+        QtMocHelpers::SlotData<void()>(17, 2, QMC::AccessPrivate, QMetaType::Void),
+        // Slot 'on_mergeStartBtn_clicked'
+        QtMocHelpers::SlotData<void()>(18, 2, QMC::AccessPrivate, QMetaType::Void),
         // Slot 'onPreviewAction'
-        QtMocHelpers::SlotData<void(int)>(17, 2, QMC::AccessPrivate, QMetaType::Void, {{
-            { QMetaType::Int, 18 },
+        QtMocHelpers::SlotData<void(int)>(19, 2, QMC::AccessPrivate, QMetaType::Void, {{
+            { QMetaType::Int, 20 },
         }}),
         // Slot 'handleImportData'
-        QtMocHelpers::SlotData<void(const QString &, const QString &, const QString &)>(19, 2, QMC::AccessPrivate, QMetaType::Void, {{
-            { QMetaType::QString, 20 }, { QMetaType::QString, 21 }, { QMetaType::QString, 22 },
+        QtMocHelpers::SlotData<void(const QString &, const QString &, const QString &)>(21, 2, QMC::AccessPrivate, QMetaType::Void, {{
+            { QMetaType::QString, 22 }, { QMetaType::QString, 23 }, { QMetaType::QString, 24 },
         }}),
     };
     QtMocHelpers::UintData qt_properties {
@@ -123,27 +129,28 @@ void MainWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, 
     auto *_t = static_cast<MainWindow *>(_o);
     if (_c == QMetaObject::InvokeMetaMethod) {
         switch (_id) {
-        case 0: _t->on_singleline_importButton_clicked(); break;
-        case 1: _t->on_wholsoueflie_importButton_clicked(); break;
-        case 2: _t->on_settingButton_clicked(); break;
-        case 3: _t->on_addlineButton_clicked(); break;
-        case 4: _t->on_delelineButton_clicked(); break;
-        case 5: _t->showContextMenu((*reinterpret_cast< std::add_pointer_t<QPoint>>(_a[1]))); break;
-        case 6: _t->onCustomContextMenuAction((*reinterpret_cast< std::add_pointer_t<QAction*>>(_a[1]))); break;
-        case 7: _t->on_outputButton_clicked(); break;
-        case 8: _t->onExportSingle(); break;
-        case 9: _t->onExportSelected(); break;
-        case 10: _t->onExportAll(); break;
-        case 11: _t->on_mergeStartBtn_clicked(); break;
-        case 12: _t->onPreviewAction((*reinterpret_cast< std::add_pointer_t<int>>(_a[1]))); break;
-        case 13: _t->handleImportData((*reinterpret_cast< std::add_pointer_t<QString>>(_a[1])),(*reinterpret_cast< std::add_pointer_t<QString>>(_a[2])),(*reinterpret_cast< std::add_pointer_t<QString>>(_a[3]))); break;
+        case 0: _t->totalProgressChanged((*reinterpret_cast< std::add_pointer_t<int>>(_a[1]))); break;
+        case 1: _t->on_singleline_importButton_clicked(); break;
+        case 2: _t->on_wholsoueflie_importButton_clicked(); break;
+        case 3: _t->on_settingButton_clicked(); break;
+        case 4: _t->on_addlineButton_clicked(); break;
+        case 5: _t->on_delelineButton_clicked(); break;
+        case 6: _t->showContextMenu((*reinterpret_cast< std::add_pointer_t<QPoint>>(_a[1]))); break;
+        case 7: _t->onCustomContextMenuAction((*reinterpret_cast< std::add_pointer_t<QAction*>>(_a[1]))); break;
+        case 8: _t->on_outputButton_clicked(); break;
+        case 9: _t->onExportSingle(); break;
+        case 10: _t->onExportSelected(); break;
+        case 11: _t->onExportAll(); break;
+        case 12: _t->on_mergeStartBtn_clicked(); break;
+        case 13: _t->onPreviewAction((*reinterpret_cast< std::add_pointer_t<int>>(_a[1]))); break;
+        case 14: _t->handleImportData((*reinterpret_cast< std::add_pointer_t<QString>>(_a[1])),(*reinterpret_cast< std::add_pointer_t<QString>>(_a[2])),(*reinterpret_cast< std::add_pointer_t<QString>>(_a[3]))); break;
         default: ;
         }
     }
     if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
         switch (_id) {
         default: *reinterpret_cast<QMetaType *>(_a[0]) = QMetaType(); break;
-        case 6:
+        case 7:
             switch (*reinterpret_cast<int*>(_a[1])) {
             default: *reinterpret_cast<QMetaType *>(_a[0]) = QMetaType(); break;
             case 0:
@@ -151,6 +158,10 @@ void MainWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, 
             }
             break;
         }
+    }
+    if (_c == QMetaObject::IndexOfMethod) {
+        if (QtMocHelpers::indexOfMethod<void (MainWindow::*)(int )>(_a, &MainWindow::totalProgressChanged, 0))
+            return;
     }
 }
 
@@ -173,15 +184,21 @@ int MainWindow::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 14)
+        if (_id < 15)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 14;
+        _id -= 15;
     }
     if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 14)
+        if (_id < 15)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 14;
+        _id -= 15;
     }
     return _id;
+}
+
+// SIGNAL 0
+void MainWindow::totalProgressChanged(int _t1)
+{
+    QMetaObject::activate<void>(this, &staticMetaObject, 0, nullptr, _t1);
 }
 QT_WARNING_POP

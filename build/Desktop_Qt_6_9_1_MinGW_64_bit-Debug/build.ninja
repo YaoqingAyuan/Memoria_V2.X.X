@@ -150,7 +150,7 @@ build MemoriaV2.exe: CXX_EXECUTABLE_LINKER__MemoriaV2_Debug CMakeFiles/MemoriaV2
   LINK_FLAGS = -mwindows
   LINK_LIBRARIES = D:/Qt/6.9.1/mingw_64/lib/libQt6Widgets.a  D:/Qt/6.9.1/mingw_64/lib/libQt6Gui.a  D:/Qt/6.9.1/mingw_64/lib/libQt6Core.a  -lmpr  -luserenv  -lmingw32  D:/Qt/6.9.1/mingw_64/lib/libQt6EntryPoint.a  -lshell32  -ld3d11  -ldxgi  -ldxguid  -ld3d12  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
   OBJECT_DIR = CMakeFiles\MemoriaV2.dir
-  POST_BUILD = C:\WINDOWS\system32\cmd.exe /C "cd /D "D:\Qt Projects\MemoriaV2\build\Desktop_Qt_6_9_1_MinGW_64_bit-Debug" && D:\Qt\Tools\CMake_64\bin\cmake.exe -E copy_directory "D:/Qt Projects/MemoriaV2/thirdparty/ffmpeg/bin" "D:/Qt Projects/MemoriaV2/build/Desktop_Qt_6_9_1_MinGW_64_bit-Debug""
+  POST_BUILD = C:\WINDOWS\system32\cmd.exe /C "cd /D "D:\Qt Projects\MemoriaV2\build\Desktop_Qt_6_9_1_MinGW_64_bit-Debug" && D:\Qt\Tools\CMake_64\bin\cmake.exe -E copy "D:/Qt Projects/MemoriaV2/ffmpeg/bin/ffmpeg.exe" "D:/Qt Projects/MemoriaV2/build/Desktop_Qt_6_9_1_MinGW_64_bit-Debug/ffmpeg.exe""
   PRE_LINK = cd .
   TARGET_FILE = MemoriaV2.exe
   TARGET_IMPLIB = libMemoriaV2.dll.a

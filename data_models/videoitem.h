@@ -20,15 +20,25 @@ public:
     int index() const { return m_index; }
     void setProgress(int progress);
     void setTitle(const QString &title);
-
     void setIndex(int index);
+
+    bool checkFilesExist() const;
+    QString generateDefaultTitle() const;
+    int progress() const;
+
+    bool hasError() const { return m_hasError; }
+    void setHasError(bool error) { m_hasError = error; }
 
 signals:
     void dataChanged();
+    void progressChanged(int progress); // 添加进度改变信号
 
 private:
     int m_index; // 行序号
     QVector<QVariant> m_data; // 存储所有列的数据
+    int m_progress = 0; // 添加进度成员变量
+
+    bool m_hasError = false; // 添加错误状态跟踪
 };
 
 #endif // VIDEOITEM_H

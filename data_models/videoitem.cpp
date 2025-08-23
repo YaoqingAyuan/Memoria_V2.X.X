@@ -1,4 +1,7 @@
-#include "videoitem.h"
+#include "data_models//videoitem.h"
+#include <QCryptographicHash>
+#include <QFile>
+#include <QDateTime>
 
 // ===================== 构造函数 =====================
 VideoItem::VideoItem(int index, QObject *parent)
@@ -32,10 +35,18 @@ void VideoItem::setData(TableColumns column, const QVariant &value) {
 
 // ===================== 特殊字段设置函数 =====================
 void VideoItem::setProgress(int progress) {
-    if (progress < 0) progress = 0;
+    if (progress < 0) {
+        progress = -1;
+        m_hasError = true; // 设置错误状态
+    }
     if (progress > 100) progress = 100;
-    m_data[COL_PROGRESS] = progress;
-    emit dataChanged();
+
+    if (m_progress != progress) {
+        m_progress = progress;
+        m_data[COL_PROGRESS] = progress;
+        emit dataChanged();
+        emit progressChanged(progress);
+    }
 }
 
 void VideoItem::setTitle(const QString &title) {
@@ -48,4 +59,56 @@ void VideoItem::setIndex(int index)
     m_index = index;
     m_data[COL_INDEX] = index;
     emit dataChanged();
+}
+
+bool VideoItem::checkFilesExist() const
+{
+    QString videoPath = data(COL_VIDEO_FILE).toString();
+    QString audioPath = data(COL_AUDIO_FILE).toString();
+
+    qDebug() << "检查文件是否存在 - 视频:" << videoPath << "音频:" << audioPath;
+
+    QFile videoFile(videoPath);
+    QFile audioFile(audioPath);
+
+    bool videoExists = videoFile.exists();
+    bool audioExists = audioFile.exists();
+    bool videoSizeValid = videoFile.size() > 0;
+    bool audioSizeValid = audioFile.size() > 0;
+
+    qDebug() << "文件检查结果 - 视频存在:" << videoExists << "视频大小有效:" << videoSizeValid
+             << "音频存在:" << audioExists << "音频大小有效:" << audioSizeValid;
+
+    return videoExists && audioExists && videoSizeValid && audioSizeValid;
+}
+
+QString VideoItem::generateDefaultTitle() const
+{
+    QString videoPath = data(COL_VIDEO_FILE).toString();
+    QString audioPath = data(COL_AUDIO_FILE).toString();
+
+    // 计算MD5哈希值
+    QCryptographicHash hash(QCryptographicHash::Md5);
+
+    QFile videoFile(videoPath);
+    if (videoFile.open(QIODevice::ReadOnly)) {
+        hash.addData(videoFile.read(1024)); // 只读取文件开头部分计算哈希
+        videoFile.close();
+    }
+
+    QFile audioFile(audioPath);
+    if (audioFile.open(QIODevice::ReadOnly)) {
+        hash.addData(audioFile.read(1024));
+        audioFile.close();
+    }
+
+    QString hashStr = QString(hash.result().toHex().left(8));
+    QString timestamp = QDateTime::currentDateTime().toString("yyyyMMdd_hhmmss");
+
+    return QString("视频_%1_%2").arg(hashStr).arg(timestamp);
+}
+
+int VideoItem::progress() const
+{
+    return m_progress;
 }

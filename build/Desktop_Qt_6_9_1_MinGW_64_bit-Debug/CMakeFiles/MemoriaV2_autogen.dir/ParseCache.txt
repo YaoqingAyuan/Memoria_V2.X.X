@@ -2625,6 +2625,7 @@ D:/Qt Projects/MemoriaV2/mainwindow.h
  mdp:D:/Qt Projects/MemoriaV2/mainwindow.h
  mdp:D:/Qt Projects/MemoriaV2/playback_widge.h
  mdp:D:/Qt/6.9.1/mingw_64/include/QtCore/QObject
+ mdp:D:/Qt/6.9.1/mingw_64/include/QtCore/QProcess
  mdp:D:/Qt/6.9.1/mingw_64/include/QtCore/QSet
  mdp:D:/Qt/6.9.1/mingw_64/include/QtCore/QStringList
  mdp:D:/Qt/6.9.1/mingw_64/include/QtCore/QVariant
@@ -2677,6 +2678,7 @@ D:/Qt Projects/MemoriaV2/mainwindow.h
  mdp:D:/Qt/6.9.1/mingw_64/include/QtCore/qglobalstatic.h
  mdp:D:/Qt/6.9.1/mingw_64/include/QtCore/qhash.h
  mdp:D:/Qt/6.9.1/mingw_64/include/QtCore/qhashfunctions.h
+ mdp:D:/Qt/6.9.1/mingw_64/include/QtCore/qiodevice.h
  mdp:D:/Qt/6.9.1/mingw_64/include/QtCore/qiodevicebase.h
  mdp:D:/Qt/6.9.1/mingw_64/include/QtCore/qiterable.h
  mdp:D:/Qt/6.9.1/mingw_64/include/QtCore/qiterator.h
@@ -2700,6 +2702,7 @@ D:/Qt Projects/MemoriaV2/mainwindow.h
  mdp:D:/Qt/6.9.1/mingw_64/include/QtCore/qoverload.h
  mdp:D:/Qt/6.9.1/mingw_64/include/QtCore/qpair.h
  mdp:D:/Qt/6.9.1/mingw_64/include/QtCore/qpoint.h
+ mdp:D:/Qt/6.9.1/mingw_64/include/QtCore/qprocess.h
  mdp:D:/Qt/6.9.1/mingw_64/include/QtCore/qprocessordetection.h
  mdp:D:/Qt/6.9.1/mingw_64/include/QtCore/qrect.h
  mdp:D:/Qt/6.9.1/mingw_64/include/QtCore/qrefcount.h

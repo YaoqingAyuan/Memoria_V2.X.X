@@ -18,7 +18,7 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
 
 # ============== FFmpeg 配置 ==============
 # 设置 FFmpeg 路径
-set(FFMPEG_DIR ${CMAKE_SOURCE_DIR}/thirdparty/ffmpeg)
+set(FFMPEG_DIR ${CMAKE_SOURCE_DIR}/ffmpeg)
 
 set(PROJECT_SOURCES
     main.cpp
@@ -58,12 +58,12 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         ${PROJECT_SOURCES}
     )
 
-    # 添加复制 FFmpeg 的命令
+    # 添加复制 FFmpeg 可执行文件的命令
     add_custom_command(TARGET MemoriaV2 POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_directory
-            ${FFMPEG_DIR}/bin
-            $<TARGET_FILE_DIR:MemoriaV2>
-        COMMENT "Copying FFmpeg binaries to build directory"
+        COMMAND ${CMAKE_COMMAND} -E copy
+            ${FFMPEG_DIR}/bin/ffmpeg.exe
+            $<TARGET_FILE_DIR:MemoriaV2>/ffmpeg.exe
+        COMMENT "Copying FFmpeg executable to build directory"
     )
 
     target_link_libraries(MemoriaV2 PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt6::Core)
@@ -86,9 +86,9 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     )
 
     # 添加 FFmpeg 安装指令
-    install(DIRECTORY ${FFMPEG_DIR}/bin/
+    install(FILES ${FFMPEG_DIR}/bin/ffmpeg.exe
             DESTINATION ${CMAKE_INSTALL_BINDIR}
-            USE_SOURCE_PERMISSIONS)
+            RENAME ffmpeg.exe)
 
     # 明确设置许可证文件的目标路径
     install(FILES ${FFMPEG_DIR}/licenses/LICENSE.txt

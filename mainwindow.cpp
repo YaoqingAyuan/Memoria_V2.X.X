@@ -8,6 +8,7 @@
 #include <QProcess>
 #include <QMessageBox>
 #include <QStandardPaths>
+#include <QTimer>
 #include "delegates/progressbardelegate.h"
 #include "dialogs/setting_dialog.h"
 #include "dialogs/singleline_import_dialog.h"
@@ -48,6 +49,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     // 更新状态显示
     updateExportStatusDisplay();
+
 
 }
 
@@ -486,7 +488,17 @@ void MainWindow::onExportSingle()
     QModelIndexList selected = ui->MaintableView->selectionModel()->selectedIndexes();
     if (!selected.isEmpty()) {
         int row = selected.first().row();
-        exportSingleItem(row);
+        if (row >= 0 && row < m_videoItems.size()) {
+            // 清空现有队列，只添加当前项
+            m_pendingItems.clear();
+            m_processingItems.clear();
+            m_pendingItems.append(m_videoItems[row]);
+
+            // 开始处理
+            m_exportInProgress = true;
+            m_failedCount = 0;
+            startMergingProcess();
+        }
     } else {
         QMessageBox::information(this, "导出", "请先选择一个项目");
     }
@@ -496,7 +508,20 @@ void MainWindow::onExportSelected()
 {
     QModelIndexList selected = ui->MaintableView->selectionModel()->selectedRows();
     if (!selected.isEmpty()) {
-        exportSelectedItems();
+        // 清空现有队列，添加选中项
+        m_pendingItems.clear();
+        m_processingItems.clear();
+
+        for (const QModelIndex &index : selected) {
+            if (index.row() < m_videoItems.size()) {
+                m_pendingItems.append(m_videoItems[index.row()]);
+            }
+        }
+
+        // 开始处理
+        m_exportInProgress = true;
+        m_failedCount = 0;
+        startMergingProcess();
     } else {
         QMessageBox::information(this, "导出", "请先选择要导出的项目");
     }
@@ -509,11 +534,15 @@ void MainWindow::onExportAll()
 
 void MainWindow::exportSingleItem(int row)
 {
-    // 导出单行项目的实现
-    if (row >= 0 && row < m_videoItems.size()) {
-        VideoItem* item = m_videoItems[row];
-        // 实现导出逻辑
-    }
+    // 清空现有队列，添加所有项
+    m_pendingItems.clear();
+    m_processingItems.clear();
+    m_pendingItems = m_videoItems;
+
+    // 开始处理
+    m_exportInProgress = true;
+    m_failedCount = 0;
+    startMergingProcess();
 }
 
 void MainWindow::exportSelectedItems()
@@ -531,10 +560,15 @@ void MainWindow::exportSelectedItems()
 
 void MainWindow::exportAllItems()
 {
-    // 导出所有项目的实现
-    for (VideoItem* item : m_videoItems) {
-        // 实现导出逻辑
-    }
+    // 清空现有队列，添加所有项
+    m_pendingItems.clear();
+    m_processingItems.clear();
+    m_pendingItems = m_videoItems;
+
+    // 开始处理
+    m_exportInProgress = true;
+    m_failedCount = 0;
+    startMergingProcess();
 }
 
 // 修改导出设置保存方法
@@ -597,31 +631,474 @@ void MainWindow::performExportOperation(ExportMode mode)
 
 void MainWindow::on_mergeStartBtn_clicked()
 {
-    // 使用成员变量而不是静态变量
     if (m_exportInProgress) return;
-
     m_exportInProgress = true;
+    m_failedCount = 0;
 
+    // 清空处理队列
+    m_processingItems.clear();
+    m_pendingItems.clear();
+
+    // 根据导出模式确定要处理的项
     if (m_rememberExportChoice) {
-        // 直接使用记住的导出模式
-        performExportOperation(m_exportMode);
+        // 使用记住的导出模式
+        switch(m_exportMode) {
+        case ExportSingle:
+            if (!m_videoItems.isEmpty()) {
+                m_pendingItems.append(m_videoItems.first());
+            }
+            break;
+        case ExportSelected:
+        {
+            QModelIndexList selected = ui->MaintableView->selectionModel()->selectedRows();
+            for (const QModelIndex &index : selected) {
+                if (index.row() < m_videoItems.size()) {
+                    m_pendingItems.append(m_videoItems[index.row()]);
+                }
+            }
+            break;
+        }
+        case ExportAll:
+            m_pendingItems = m_videoItems;
+            break;
+        }
     } else {
         // 弹出导出设置对话框
         export_setting_dialog dialog(this, m_exportMode, m_rememberExportChoice);
         dialog.setWindowTitle(tr("生成模式设置"));
 
         if (dialog.exec() == QDialog::Accepted) {
-            // 使用对话框返回的设置更新当前会话
             ExportMode newMode = dialog.getExportMode();
             bool remember = dialog.rememberChoice();
 
             setExportSettingsSessionOnly(newMode, remember);
-            performExportOperation(newMode);
+
+            // 根据选择的模式添加项目到待处理列表
+            switch(newMode) {
+            case ExportSingle:
+                if (!m_videoItems.isEmpty()) {
+                    m_pendingItems.append(m_videoItems.first());
+                }
+                break;
+            case ExportSelected:
+            {
+                QModelIndexList selected = ui->MaintableView->selectionModel()->selectedRows();
+                for (const QModelIndex &index : selected) {
+                    if (index.row() < m_videoItems.size()) {
+                        m_pendingItems.append(m_videoItems[index.row()]);
+                    }
+                }
+                break;
+            }
+            case ExportAll:
+                m_pendingItems = m_videoItems;
+                break;
+            }
+        } else {
+            m_exportInProgress = false;
+            return; // 用户取消
         }
     }
 
-    m_exportInProgress = false;
+    // 开始处理
+    startMergingProcess();
 }
+
+void MainWindow::startMergingProcess()
+{
+    qDebug() << "开始混流过程，待处理项目数:" << m_pendingItems.size();
+
+    // 重置进度条
+    ui->Total_progressBar->setValue(0);
+
+    // 开始处理项目
+    for (int i = 0; i < m_maxConcurrentProcesses && !m_pendingItems.isEmpty(); i++) {
+        qDebug() << "启动处理第" << i+1 << "个项目";
+        processNextItem();
+    }
+
+}
+
+void MainWindow::processNextItem()
+{
+    qDebug() << "处理下一个项目，待处理队列大小:" << m_pendingItems.size();
+
+    if (m_pendingItems.isEmpty()) {
+        qDebug() << "待处理队列为空，返回";
+        return;
+    }
+
+    VideoItem* item = m_pendingItems.takeFirst();
+    m_processingItems.append(item);
+
+    qDebug() << "开始处理项目:" << item->data(COL_TITLE).toString();
+
+    // 检查文件是否存在
+    if (!item->checkFilesExist()) {
+        qDebug() << "文件不存在或文件大小为0，标记为失败";
+        // 只有在之前没有错误的情况下才处理
+        if (!item->hasError()) {
+            m_failedCount++;
+            item->setProgress(-1); // 这会设置错误状态
+            item->setHasError(true); // 明确设置错误状态
+            qDebug() << "失败计数增加，当前失败数:" << m_failedCount;
+        }
+        m_processingItems.removeOne(item);
+        qDebug() << "从处理队列中移除项目";
+
+        // 继续处理下一个
+        if (!m_pendingItems.isEmpty()) {
+            qDebug() << "继续处理下一个项目";
+            processNextItem();
+        } else if (m_processingItems.isEmpty()) {
+            qDebug() << "所有项目处理完成，调用完成函数";
+            finishMergingProcess();
+        }
+        return;
+    }
+
+    // 检查标题是否为空，为空则生成默认标题
+    if (item->data(COL_TITLE).toString().isEmpty()) {
+        QString defaultTitle = item->generateDefaultTitle();
+        item->setTitle(defaultTitle);
+        qDebug() << "生成了默认标题:" << defaultTitle;
+
+        // 更新表格显示
+        int row = m_videoItems.indexOf(item);
+        if (row >= 0) updateTableRow(row);
+    }
+
+    // 开始FFmpeg处理
+    qDebug() << "开始FFmpeg处理";
+    startFFmpegForItem(item);
+}
+
+void MainWindow::startFFmpegForItem(VideoItem* item)
+{
+    qDebug() << "为项目启动FFmpeg:" << item->data(COL_TITLE).toString();
+
+    // 1. 获取应用程序目录
+    QString appDir = QCoreApplication::applicationDirPath();
+
+    // 2. FFmpeg路径 - 直接使用ffmpeg.exe
+    QString ffmpegExe = appDir + "/ffmpeg.exe";
+
+    // 3. 验证FFmpeg存在
+    if (!QFile::exists(ffmpegExe)) {
+        // 如果构建目录中没有，尝试原始位置（用于调试）
+        QString originalFfmpeg = QCoreApplication::applicationDirPath() + "/../ffmpeg/bin/ffmpeg.exe";
+
+        if (QFile::exists(originalFfmpeg)) {
+            ffmpegExe = originalFfmpeg;
+        } else {
+            qWarning() << "FFmpeg not found at:" << ffmpegExe;
+            qWarning() << "Also checked original location:" << originalFfmpeg;
+
+            // 只有在之前没有错误的情况下才处理
+            if (!item->hasError()) {
+                item->setProgress(-1);
+                item->setHasError(true);
+                m_processingItems.removeOne(item);
+                m_failedCount++;
+
+                QMessageBox::critical(this, "FFmpeg错误",
+                                      QString("找不到FFmpeg可执行文件:\n%1\n%2")
+                                          .arg(ffmpegExe)
+                                          .arg("请确保ffmpeg.exe已正确放置在ffmpeg/bin目录下"));
+            }
+
+            return;
+        }
+    }
+
+    // 4. 获取视频项数据
+    QString videoPath = item->data(COL_VIDEO_FILE).toString();
+    QString audioPath = item->data(COL_AUDIO_FILE).toString();
+    QString outputPath = ui->outputAdd_Edit->text();
+    QString title = item->data(COL_TITLE).toString();
+
+    if (outputPath.isEmpty()) {
+        // 只有在之前没有错误的情况下才处理
+        if (!item->hasError()) {
+            QMessageBox::warning(this, "输出错误", "请先设置输出目录");
+            item->setProgress(-1);
+            item->setHasError(true);
+            m_processingItems.removeOne(item);
+        }
+        return;
+    }
+
+    // 5. 处理文件名中的非法字符
+    QString safeTitle = title;
+    QRegularExpression illegalChars(R"([\\/:*?"<>|])");
+    safeTitle.replace(illegalChars, "_");
+
+    // 6. 确保输出目录存在
+    QDir outputDir(outputPath);
+    if (!outputDir.exists()) {
+        if (!outputDir.mkpath(".")) {
+            qWarning() << "Failed to create output directory:" << outputPath;
+            // 只有在之前没有处理过错误的情况下才标记失败
+            if (item->progress() != -1) {
+                item->setProgress(-1);
+                m_processingItems.removeOne(item);
+                m_failedCount++;
+                QMessageBox::critical(this, "输出错误", "无法创建输出目录：" + outputPath);
+            }
+            return;
+        }
+    }
+
+    // 7. 获取输出格式
+    QString format = "mp4"; // 默认MP4格式
+
+    // 8. 构建安全的输出文件路径
+    QString outputFile = outputDir.filePath(safeTitle + "." + format);
+
+    // 9. 创建FFmpeg进程
+    QProcess* ffmpegProcess = new QProcess(this);
+    ffmpegProcess->setProperty("videoItem", QVariant::fromValue<VideoItem*>(item));
+
+    // 10. 构建FFmpeg命令
+    QStringList args;
+
+    // 添加输入文件（直接使用路径）
+    if (!videoPath.isEmpty()) {
+        args << "-i" << videoPath;
+    }
+    if (!audioPath.isEmpty()) {
+        args << "-i" << audioPath;
+    }
+
+    // 设置流复制参数
+    args << "-c:v" << "copy" << "-c:a" << "copy";
+
+    // 根据格式设置容器
+    if (format == "mp4") {
+        args << "-f" << "mp4";
+    } else if (format == "mkv") {
+        args << "-f" << "matroska";
+    } else if (format == "webm") {
+        args << "-f" << "webm";
+    } else if (format == "avi") {
+        args << "-f" << "avi";
+    }
+
+    // 添加输出文件参数
+    args << "-y";
+    args << outputFile; // 直接使用输出路径
+
+    // 11. 连接信号处理
+    connect(ffmpegProcess, &QProcess::readyReadStandardOutput, this, [this, ffmpegProcess]() {
+        QString output = ffmpegProcess->readAllStandardOutput();
+        VideoItem* item = ffmpegProcess->property("videoItem").value<VideoItem*>();
+        if (item) parseFFmpegOutput(item, output);
+    });
+
+    connect(ffmpegProcess, &QProcess::readyReadStandardError, this, [this, ffmpegProcess]() {
+        QString output = ffmpegProcess->readAllStandardError();
+        VideoItem* item = ffmpegProcess->property("videoItem").value<VideoItem*>();
+        if (item) parseFFmpegOutput(item, output);
+    });
+
+    // 在进程完成信号处理中添加调试输出
+    connect(ffmpegProcess, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
+            this, [this, ffmpegProcess](int exitCode, QProcess::ExitStatus exitStatus) {
+                VideoItem* item = ffmpegProcess->property("videoItem").value<VideoItem*>();
+                if (item) {
+                    qDebug() << "FFmpeg进程完成，退出码:" << exitCode << "退出状态:" << exitStatus;
+
+                    // 只有在之前没有错误的情况下才处理
+                    if (!item->hasError()) {
+                        if (exitStatus == QProcess::NormalExit && exitCode == 0) {
+                            qDebug() << "FFmpeg处理成功";
+                            item->setProgress(100);
+                        } else {
+                            qDebug() << "FFmpeg处理失败";
+                            item->setProgress(-1);
+                            item->setHasError(true);
+                            m_failedCount++;
+                            qDebug() << "失败计数增加，当前失败数:" << m_failedCount;
+
+                            QString errorOutput = ffmpegProcess->readAllStandardError();
+                            qDebug() << "FFmpeg错误输出:" << errorOutput;
+
+                            // 将错误输出保存到文件
+                            QFile errorLog(QCoreApplication::applicationDirPath() + "/ffmpeg_error.log");
+                            if (errorLog.open(QIODevice::WriteOnly | QIODevice::Append)) {
+                                errorLog.write(QString("Exit code: %1\n").arg(exitCode).toUtf8());
+                                errorLog.write("Command: " + ffmpegProcess->program().toUtf8() + " " + ffmpegProcess->arguments().join(" ").toUtf8() + "\n");
+                                errorLog.write("Error output:\n" + errorOutput.toUtf8() + "\n\n");
+                                errorLog.close();
+                            }
+                        }
+                    }
+
+                    m_processingItems.removeOne(item);
+                    qDebug() << "从处理队列中移除项目，当前处理中项目数:" << m_processingItems.size();
+                    ffmpegProcess->deleteLater();
+                    updateTotalProgress();
+
+                    if (!m_pendingItems.isEmpty()) {
+                        qDebug() << "有待处理项目，继续处理下一个";
+                        processNextItem();
+                    } else if (m_processingItems.isEmpty()) {
+                        qDebug() << "所有项目处理完成，调用完成函数";
+                        finishMergingProcess();
+                    }
+                }
+            });
+
+    // 在进程错误信号处理中添加调试输出
+    connect(ffmpegProcess, &QProcess::errorOccurred,
+            this, [this, ffmpegProcess](QProcess::ProcessError error) {
+                VideoItem* item = ffmpegProcess->property("videoItem").value<VideoItem*>();
+                qDebug() << "FFmpeg进程错误:" << error;
+
+                // 只有在之前没有错误的情况下才处理
+                if (item && !item->hasError()) {
+                    // 只处理启动失败的情况，其他错误由finished信号处理
+                    if (error == QProcess::FailedToStart) {
+                        qDebug() << "FFmpeg启动失败";
+                        item->setProgress(-1);
+                        item->setHasError(true);
+                        m_failedCount++;
+                        qDebug() << "失败计数增加，当前失败数:" << m_failedCount;
+
+                        QString errorStr;
+                        switch(error) {
+                        case QProcess::FailedToStart:
+                            errorStr = "无法启动FFmpeg进程";
+                            break;
+                        default:
+                            return;  // 其他错误类型由finished信号处理
+                        }
+
+                        qDebug() << errorStr;
+                        QMessageBox::critical(this, "FFmpeg错误", errorStr);
+
+                        // 保存错误信息
+                        QFile errorLog(QCoreApplication::applicationDirPath() + "/ffmpeg_error.log");
+                        if (errorLog.open(QIODevice::WriteOnly | QIODevice::Append)) {
+                            errorLog.write(QString("Error: %1\n").arg(errorStr).toUtf8());
+                            errorLog.write("Command: " + ffmpegProcess->program().toUtf8() + " " + ffmpegProcess->arguments().join(" ").toUtf8() + "\n");
+                            errorLog.close();
+                        }
+
+                        m_processingItems.removeOne(item);
+                        qDebug() << "从处理队列中移除项目，当前处理中项目数:" << m_processingItems.size();
+                        ffmpegProcess->deleteLater();
+                        updateTotalProgress();
+
+                        if (!m_pendingItems.isEmpty()) {
+                            qDebug() << "有待处理项目，继续处理下一个";
+                            processNextItem();
+                        } else if (m_processingItems.isEmpty()) {
+                            qDebug() << "所有项目处理完成，调用完成函数";
+                            finishMergingProcess();
+                        }
+                    }
+                }
+            });
+
+
+    // 14. 启动进程
+    qDebug() << "Executing FFmpeg command:" << ffmpegExe << args;
+    ffmpegProcess->start(ffmpegExe, args);
+
+    // 15. 添加超时处理
+    QTimer::singleShot(5 * 60 * 1000, this, [ffmpegProcess, this]() {
+        if (ffmpegProcess && ffmpegProcess->state() == QProcess::Running) {
+            qDebug() << "FFmpeg process timed out, terminating";
+            ffmpegProcess->terminate();
+
+            // 等待5秒强制终止
+            QTimer::singleShot(5000, this, [ffmpegProcess, this]() {
+                if (ffmpegProcess && ffmpegProcess->state() == QProcess::Running) {
+                    qDebug() << "FFmpeg process still running, killing";
+                    ffmpegProcess->kill();
+                }
+            });
+        }
+    });
+
+
+
+}
+
+void MainWindow::finishMergingProcess()
+{
+    qDebug() << "完成混流过程，总项目数:" << m_videoItems.size() << "失败数:" << m_failedCount;
+
+    m_exportInProgress = false;
+
+    // 重置所有项目的错误状态
+    for (VideoItem* item : m_videoItems) {
+        item->setHasError(false);
+    }
+
+    // 显示完成消息
+    QString message = QString("混流完成! 成功: %1, 失败: %2")
+                          .arg(m_videoItems.size() - m_failedCount)
+                          .arg(m_failedCount);
+
+    qDebug() << "显示完成消息:" << message;
+    QMessageBox::information(this, "混流完成", message);
+}
+
+void MainWindow::parseFFmpegOutput(VideoItem* item, const QString& output)
+{
+    // 解析FFmpeg输出获取进度
+    // 这里需要根据FFmpeg的实际输出格式进行解析
+    // 示例代码，实际需要根据FFmpeg输出调整
+
+    QRegularExpression timeRegex("time=(\\d+):(\\d+):(\\d+).(\\d+)");
+    QRegularExpressionMatch match = timeRegex.match(output);
+
+    if (match.hasMatch()) {
+        int hours = match.captured(1).toInt();
+        int minutes = match.captured(2).toInt();
+        int seconds = match.captured(3).toInt();
+        int ms = match.captured(4).toInt();
+
+        int totalMs = (hours * 3600 + minutes * 60 + seconds) * 1000 + ms;
+
+        // 假设总时长已知（实际可能需要从文件元数据获取）
+        // 这里简化处理，实际应用中需要更精确的进度计算
+        int progress = qMin(100, totalMs / 10000); // 假设10秒视频
+
+        item->setProgress(progress);
+        updateTotalProgress();
+    }
+}
+
+
+void MainWindow::updateTotalProgress()
+{
+    if (m_videoItems.isEmpty()) {
+        ui->Total_progressBar->setValue(0);
+        return;
+    }
+
+    int totalProgress = 0;
+    int validItems = 0;
+
+    for (VideoItem* item : m_videoItems) {
+        int progress = item->progress();
+        if (progress >= 0 && !item->hasError()) { // 只计算有效进度且没有错误的项目
+            totalProgress += progress;
+            validItems++;
+        }
+    }
+
+    if (validItems > 0) {
+        totalProgress /= validItems;
+    }
+
+    ui->Total_progressBar->setValue(totalProgress);
+}
+
+
 
 void MainWindow::setExportSettingsSessionOnly(ExportMode mode, bool remember)
 {
@@ -638,6 +1115,7 @@ void MainWindow::handleImportData(const QString& videoPath, const QString& audio
     // 创建新行对象
     int newIndex = m_videoItems.size() + 1;
     VideoItem* newItem = new VideoItem(newIndex, this);
+    newItem->setHasError(false); // 确保新项目没有错误状态
     m_videoItems.append(newItem);
 
     // 设置数据 - 使用 setData 方法而不是 setVideoFile/setAudioFile
@@ -715,7 +1193,12 @@ void MainWindow::handleImportData(const QString& videoPath, const QString& audio
 void MainWindow::initPathMemory()
 {
     // 加载保存的路径
-    loadPathSettings();
+    QSettings settings;
+    m_lastOutputPath = settings.value("LastOutputPath",
+                                      QStandardPaths::writableLocation(QStandardPaths::DownloadLocation)).toString();
+
+    // 设置到UI
+    ui->outputAdd_Edit->setText(m_lastOutputPath);
 
     // 如果没有保存的路径，使用默认路径
     if (m_lastVideoPath.isEmpty()) m_lastVideoPath = QDir::homePath();

@@ -9,6 +9,7 @@
 #include "delegates/exportmode.h"
 #include "playback_widge.h"
 #include <QProgressBar>
+#include <QProcess>
 
 // 添加前向声明
 class export_setting_dialog;
@@ -39,6 +40,9 @@ public:
 
     // 添加一个方法来只更新当前会话的设置而不保存到持久化设置
     void setExportSettingsSessionOnly(ExportMode mode, bool remember);
+
+signals:
+    void totalProgressChanged(int progress); // 添加总进度改变信号
 
 private slots:
     void on_singleline_importButton_clicked();
@@ -115,6 +119,22 @@ private:
     void savePathSettings();
     // 加载路径设置
     void loadPathSettings();
+
+    // 混流管理
+    QList<VideoItem*> m_processingItems;
+    QList<VideoItem*> m_pendingItems;
+    int m_failedCount = 0;
+    int m_maxConcurrentProcesses = 3;
+
+    // 混流相关方法
+    void startMergingProcess();
+    void processNextItem();
+    void startFFmpegForItem(VideoItem* item);
+    void updateTotalProgress();
+    void handleFFmpegFinished(int exitCode, QProcess::ExitStatus exitStatus); // 修正函数签名
+    void handleFFmpegError(QProcess::ProcessError error); // 修正函数签名
+    void parseFFmpegOutput(VideoItem* item, const QString& output);
+    void finishMergingProcess(); // 添加完成处理函数声明
 
 };
 

@@ -7,29 +7,35 @@
 #include "del_setting_dialog.h"
 #include "dialogs/export_setting_dialog.h"
 #include "mainwindow.h"
+#include "data_models/tablemanager.h" // 添加包含
 
 // ===================== 构造函数/析构函数 =====================
-Setting_Dialog::Setting_Dialog(ColumnManager* columnManager, QWidget *parent)
+Setting_Dialog::Setting_Dialog(TableManager* tableManager, QWidget *parent)
     : QDialog(parent)
     , ui(new Ui::Setting_Dialog)
-    , m_columnManager(columnManager)
+    , m_tableManager(tableManager)
     , m_selectAllCheckBox(nullptr)
     , m_exportDialogShowing(false)
     , m_deleteDialogShowing(false)
-    , m_settingsChanged(false) // 初始化设置更改标志
+    , m_settingsChanged(false)
 {
+    qDebug() << "Setting_Dialog created" << this;
+    qDebug() << "Parent:" << parent;
+
     ui->setupUi(this);
+
+    // 通过 TableManager 获取 ColumnManager
+    ColumnManager* columnManager = &m_tableManager->columnManager();
 
     // 获取主窗口引用
     m_mainWindow = qobject_cast<MainWindow*>(parent);
 
-    // 初始化删除模式状态
+    // 初始化模式状态
     if (m_mainWindow) {
         m_currentDeleteMode = m_mainWindow->getDeleteMode();
         m_currentRememberChoice = m_mainWindow->getRememberChoice();
         updateDeleteModeDisplay();
 
-        // 初始化导出模式状态
         m_currentExportMode = m_mainWindow->getExportMode();
         m_currentExportRememberChoice = m_mainWindow->getExportRememberChoice();
         updateExportModeDisplay();
@@ -52,11 +58,14 @@ Setting_Dialog::Setting_Dialog(ColumnManager* columnManager, QWidget *parent)
     columnsLayout->addWidget(m_selectAllCheckBox);
 
     // 添加可选列复选框
-    QList<TableColumns> optionalColumns = m_columnManager->getOptionalColumns();
+    QList<TableColumns> optionalColumns = columnManager->getOptionalColumns();
     for (TableColumns column : optionalColumns) {
-        QCheckBox* checkBox = new QCheckBox(ui->columnsContainer);
-        checkBox->setText(m_columnManager->getColumnName(column));
-        checkBox->setChecked(m_columnManager->isColumnVisible(column));
+        // 修复：使用 columnManager 获取列名，而不是未定义的 columnName
+        QString columnName = columnManager->getColumnName(column);
+        // 修复：明确指定父对象为 ui->columnsContainer
+        QCheckBox* checkBox = new QCheckBox(columnName, ui->columnsContainer);
+
+        checkBox->setChecked(columnManager->isColumnVisible(column));
         checkBox->setProperty("column", static_cast<int>(column));
         columnsLayout->addWidget(checkBox);
 
@@ -67,9 +76,13 @@ Setting_Dialog::Setting_Dialog(ColumnManager* columnManager, QWidget *parent)
     // 添加弹簧使复选框顶部对齐
     columnsLayout->addStretch();
 
-    // 连接信号槽
-    connect(m_selectAllCheckBox, &QCheckBox::checkStateChanged,
-            this, &Setting_Dialog::onSelectAllStateChanged);
+    // 连接信号槽 - 确保只连接一次
+    static bool connected = false;
+    if (!connected) {
+        connect(m_selectAllCheckBox, &QCheckBox::checkStateChanged,
+                this, &Setting_Dialog::onSelectAllStateChanged);
+        connected = true;
+    }
 
     // 初始更新全选状态
     updateSelectAllState();
@@ -80,22 +93,28 @@ Setting_Dialog::Setting_Dialog(ColumnManager* columnManager, QWidget *parent)
 
     // 初始禁用应用按钮
     ui->ApplyButton->setEnabled(false);
-
 }
 
 Setting_Dialog::~Setting_Dialog()
 {
+    qDebug() << "~Setting_Dialog()" << this;
+    qDebug() << "Deleting UI";
     delete ui;
+    qDebug() << "UI deleted";
+    // 移除 disconnect() 调用（Qt会自动处理）
 }
 
 // ===================== 应用设置函数 =====================
 void Setting_Dialog::applySettings()
 {
+    // 通过 TableManager 获取 ColumnManager
+    ColumnManager* columnManager = &m_tableManager->columnManager();
+
     // 应用列设置
     for (QCheckBox* checkBox : ui->columnsContainer->findChildren<QCheckBox*>()) {
         if (checkBox != m_selectAllCheckBox && checkBox->property("column").isValid()) {
             TableColumns column = static_cast<TableColumns>(checkBox->property("column").toInt());
-            m_columnManager->setColumnVisibility(column, checkBox->isChecked());
+            columnManager->setColumnVisibility(column, checkBox->isChecked());
         }
     }
 
@@ -121,6 +140,7 @@ void Setting_Dialog::updateDeleteModeDisplay()
     }
 
     ui->del_state_line->setText(stateText);
+    qDebug() << "updateDeleteModeDisplay:" << stateText;
 }
 
 void Setting_Dialog::handleStateSettingButtonClicked()
@@ -230,6 +250,7 @@ void Setting_Dialog::updateExportModeDisplay()
     }
 
     ui->exp_stase_line->setText(stateText);
+    qDebug() << "updateExportModeDisplay:" << stateText;
 }
 
 void Setting_Dialog::on_statesetting_Button_2_clicked()

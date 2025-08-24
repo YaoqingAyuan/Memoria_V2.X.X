@@ -2,14 +2,11 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include <QStandardItemModel>
-#include "data_models/tablecolumns.h"
-#include "data_models/videoitem.h"
+#include <QProgressBar>
+#include "data_models/tablemanager.h"
 #include "delegates/deletemode.h"
 #include "delegates/exportmode.h"
 #include "playback_widge.h"
-#include <QProgressBar>
-#include <QProcess>
 
 // 添加前向声明
 class export_setting_dialog;
@@ -68,31 +65,15 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
-    void initTableView();
-    void updateTableHeaders();
 
-    ColumnManager m_columnManager;
-    QStandardItemModel* m_tableModel;
+    // 添加 TableManager 成员变量
+    TableManager* m_tableManager;
 
-    QVector<VideoItem*> m_videoItems;
     QProgressBar* m_progressDelegate;
-    QList<TableColumns> m_currentColumnsOrder;
-
-    void setupContextMenu();
-    void updateRowNumbers();
-    void updateTableRow(int rowIndex);
-    void clearModelData();
 
     // 删除相关成员
     DeleteMode m_deleteMode = DeleteFirst;
     bool m_rememberDeleteChoice = false;
-
-    // 执行删除操作
-    void performDeleteOperation(DeleteMode mode);
-
-    void exportSingleItem(int row);
-    void exportSelectedItems();
-    void exportAllItems();
 
     // 添加导出相关成员
     ExportMode m_exportMode = ExportSingle;
@@ -131,11 +112,19 @@ private:
     void processNextItem();
     void startFFmpegForItem(VideoItem* item);
     void updateTotalProgress();
-    void handleFFmpegFinished(int exitCode, QProcess::ExitStatus exitStatus); // 修正函数签名
-    void handleFFmpegError(QProcess::ProcessError error); // 修正函数签名
     void parseFFmpegOutput(VideoItem* item, const QString& output);
     void finishMergingProcess(); // 添加完成处理函数声明
 
+    // 删除操作管理
+    void performDeleteOperation(DeleteMode mode);
+
+    // 导出操作管理
+    void exportSingleItem(int row);
+    void exportSelectedItems();
+    void exportAllItems();
+
+    // 设置上下文菜单
+    void setupContextMenu();
 };
 
 #endif // MAINWINDOW_H

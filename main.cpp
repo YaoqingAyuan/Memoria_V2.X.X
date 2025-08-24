@@ -4,6 +4,8 @@
 
 int main(int argc, char *argv[])
 {
+    qDebug() << "Main function started."; // 调试点1：确认程序进入main()
+
     QApplication a(argc, argv);
 
     // 配置应用程序信息（必须在创建QSettings对象前设置）
@@ -11,7 +13,10 @@ int main(int argc, char *argv[])
     QCoreApplication::setApplicationName("Memoria");
 
     MainWindow w;
-    w.show();
-    return a.exec();
+    qDebug() << "MainWindow instance created."; // 调试点2：确认窗口实例创建
 
+    w.show();
+    qDebug() << "MainWindow shown."; // 调试点3：确认show()被调用
+
+    return a.exec();
 }

@@ -1,10 +1,14 @@
 D:/Qt\ Projects/MemoriaV2/build/Desktop_Qt_6_9_1_MinGW_64_bit-Debug/MemoriaV2_autogen/2NRMJ5X7RK/moc_setting_dialog.cpp: D:/Qt\ Projects/MemoriaV2/dialogs/setting_dialog.h \
   D:/Qt\ Projects/MemoriaV2/build/Desktop_Qt_6_9_1_MinGW_64_bit-Debug/MemoriaV2_autogen/moc_predefs.h \
   D:/Qt\ Projects/MemoriaV2/data_models/tablecolumns.h \
+  D:/Qt\ Projects/MemoriaV2/data_models/tablemanager.h \
+  D:/Qt\ Projects/MemoriaV2/data_models/videoitem.h \
   D:/Qt\ Projects/MemoriaV2/delegates/deletemode.h \
   D:/Qt\ Projects/MemoriaV2/delegates/exportmode.h \
+  D:/Qt/6.9.1/mingw_64/include/QtCore/QObject \
   D:/Qt/6.9.1/mingw_64/include/QtCore/QSet \
   D:/Qt/6.9.1/mingw_64/include/QtCore/QStringList \
+  D:/Qt/6.9.1/mingw_64/include/QtCore/QVariant \
   D:/Qt/6.9.1/mingw_64/include/QtCore/QVector \
   D:/Qt/6.9.1/mingw_64/include/QtCore/q17memory.h \
   D:/Qt/6.9.1/mingw_64/include/QtCore/q20functional.h \
@@ -13,6 +17,7 @@ D:/Qt\ Projects/MemoriaV2/build/Desktop_Qt_6_9_1_MinGW_64_bit-Debug/MemoriaV2_au
   D:/Qt/6.9.1/mingw_64/include/QtCore/q20type_traits.h \
   D:/Qt/6.9.1/mingw_64/include/QtCore/q20utility.h \
   D:/Qt/6.9.1/mingw_64/include/QtCore/q23utility.h \
+  D:/Qt/6.9.1/mingw_64/include/QtCore/qabstractitemmodel.h \
   D:/Qt/6.9.1/mingw_64/include/QtCore/qalgorithms.h \
   D:/Qt/6.9.1/mingw_64/include/QtCore/qanystringview.h \
   D:/Qt/6.9.1/mingw_64/include/QtCore/qarraydata.h \
@@ -54,11 +59,13 @@ D:/Qt\ Projects/MemoriaV2/build/Desktop_Qt_6_9_1_MinGW_64_bit-Debug/MemoriaV2_au
   D:/Qt/6.9.1/mingw_64/include/QtCore/qhash.h \
   D:/Qt/6.9.1/mingw_64/include/QtCore/qhashfunctions.h \
   D:/Qt/6.9.1/mingw_64/include/QtCore/qiodevicebase.h \
+  D:/Qt/6.9.1/mingw_64/include/QtCore/qitemselectionmodel.h \
   D:/Qt/6.9.1/mingw_64/include/QtCore/qiterable.h \
   D:/Qt/6.9.1/mingw_64/include/QtCore/qiterator.h \
   D:/Qt/6.9.1/mingw_64/include/QtCore/qlatin1stringview.h \
   D:/Qt/6.9.1/mingw_64/include/QtCore/qline.h \
   D:/Qt/6.9.1/mingw_64/include/QtCore/qlist.h \
+  D:/Qt/6.9.1/mingw_64/include/QtCore/qlocale.h \
   D:/Qt/6.9.1/mingw_64/include/QtCore/qlogging.h \
   D:/Qt/6.9.1/mingw_64/include/QtCore/qmalloc.h \
   D:/Qt/6.9.1/mingw_64/include/QtCore/qmap.h \
@@ -79,6 +86,7 @@ D:/Qt\ Projects/MemoriaV2/build/Desktop_Qt_6_9_1_MinGW_64_bit-Debug/MemoriaV2_au
   D:/Qt/6.9.1/mingw_64/include/QtCore/qprocessordetection.h \
   D:/Qt/6.9.1/mingw_64/include/QtCore/qrect.h \
   D:/Qt/6.9.1/mingw_64/include/QtCore/qrefcount.h \
+  D:/Qt/6.9.1/mingw_64/include/QtCore/qregularexpression.h \
   D:/Qt/6.9.1/mingw_64/include/QtCore/qscopedpointer.h \
   D:/Qt/6.9.1/mingw_64/include/QtCore/qscopeguard.h \
   D:/Qt/6.9.1/mingw_64/include/QtCore/qset.h \
@@ -132,6 +140,7 @@ D:/Qt\ Projects/MemoriaV2/build/Desktop_Qt_6_9_1_MinGW_64_bit-Debug/MemoriaV2_au
   D:/Qt/6.9.1/mingw_64/include/QtCore/qversiontagging.h \
   D:/Qt/6.9.1/mingw_64/include/QtCore/qxptype_traits.h \
   D:/Qt/6.9.1/mingw_64/include/QtCore/qyieldcpu.h \
+  D:/Qt/6.9.1/mingw_64/include/QtGui/QStandardItemModel \
   D:/Qt/6.9.1/mingw_64/include/QtGui/qaction.h \
   D:/Qt/6.9.1/mingw_64/include/QtGui/qbitmap.h \
   D:/Qt/6.9.1/mingw_64/include/QtGui/qbrush.h \
@@ -152,18 +161,34 @@ D:/Qt\ Projects/MemoriaV2/build/Desktop_Qt_6_9_1_MinGW_64_bit-Debug/MemoriaV2_au
   D:/Qt/6.9.1/mingw_64/include/QtGui/qregion.h \
   D:/Qt/6.9.1/mingw_64/include/QtGui/qrgb.h \
   D:/Qt/6.9.1/mingw_64/include/QtGui/qrgba64.h \
+  D:/Qt/6.9.1/mingw_64/include/QtGui/qstandarditemmodel.h \
   D:/Qt/6.9.1/mingw_64/include/QtGui/qtgui-config.h \
   D:/Qt/6.9.1/mingw_64/include/QtGui/qtguiexports.h \
   D:/Qt/6.9.1/mingw_64/include/QtGui/qtguiglobal.h \
   D:/Qt/6.9.1/mingw_64/include/QtGui/qtransform.h \
+  D:/Qt/6.9.1/mingw_64/include/QtGui/qvalidator.h \
   D:/Qt/6.9.1/mingw_64/include/QtGui/qwindowdefs.h \
   D:/Qt/6.9.1/mingw_64/include/QtGui/qwindowdefs_win.h \
   D:/Qt/6.9.1/mingw_64/include/QtWidgets/QCheckBox \
   D:/Qt/6.9.1/mingw_64/include/QtWidgets/QDialog \
+  D:/Qt/6.9.1/mingw_64/include/QtWidgets/QTableView \
   D:/Qt/6.9.1/mingw_64/include/QtWidgets/qabstractbutton.h \
+  D:/Qt/6.9.1/mingw_64/include/QtWidgets/qabstractitemdelegate.h \
+  D:/Qt/6.9.1/mingw_64/include/QtWidgets/qabstractitemview.h \
+  D:/Qt/6.9.1/mingw_64/include/QtWidgets/qabstractscrollarea.h \
+  D:/Qt/6.9.1/mingw_64/include/QtWidgets/qabstractslider.h \
+  D:/Qt/6.9.1/mingw_64/include/QtWidgets/qabstractspinbox.h \
   D:/Qt/6.9.1/mingw_64/include/QtWidgets/qcheckbox.h \
   D:/Qt/6.9.1/mingw_64/include/QtWidgets/qdialog.h \
+  D:/Qt/6.9.1/mingw_64/include/QtWidgets/qframe.h \
+  D:/Qt/6.9.1/mingw_64/include/QtWidgets/qrubberband.h \
   D:/Qt/6.9.1/mingw_64/include/QtWidgets/qsizepolicy.h \
+  D:/Qt/6.9.1/mingw_64/include/QtWidgets/qslider.h \
+  D:/Qt/6.9.1/mingw_64/include/QtWidgets/qstyle.h \
+  D:/Qt/6.9.1/mingw_64/include/QtWidgets/qstyleoption.h \
+  D:/Qt/6.9.1/mingw_64/include/QtWidgets/qtabbar.h \
+  D:/Qt/6.9.1/mingw_64/include/QtWidgets/qtableview.h \
+  D:/Qt/6.9.1/mingw_64/include/QtWidgets/qtabwidget.h \
   D:/Qt/6.9.1/mingw_64/include/QtWidgets/qtwidgets-config.h \
   D:/Qt/6.9.1/mingw_64/include/QtWidgets/qtwidgetsexports.h \
   D:/Qt/6.9.1/mingw_64/include/QtWidgets/qtwidgetsglobal.h \

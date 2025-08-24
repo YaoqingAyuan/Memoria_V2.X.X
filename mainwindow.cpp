@@ -3,32 +3,52 @@
 #include <QHeaderView>
 #include <QProgressBar>
 #include <QSettings>
-#include <Qmessagebox>
+#include <QMessageBox>
 #include <QFileDialog>
 #include <QProcess>
-#include <QMessageBox>
 #include <QStandardPaths>
 #include <QTimer>
 #include "delegates/progressbardelegate.h"
 #include "dialogs/setting_dialog.h"
 #include "dialogs/singleline_import_dialog.h"
 #include "dialogs/del_setting_dialog.h"
-#include "dialogs/export_setting_dialog.h" // 添加包含
+#include "dialogs/export_setting_dialog.h"
+#include "data_models/tablemanager.h"
+
 
 // ===================== 构造函数/析构函数 =====================
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
-    , m_tableModel(new QStandardItemModel(this))
+    , m_tableManager(nullptr) // 初始化为 nullptr
 {
+    qDebug() << "UI setup start";
     ui->setupUi(this);
+    qDebug() << "UI setup done. MaintableView:" << ui->MaintableView;
+
+    if (!ui->MaintableView) {
+        qCritical() << "MaintableView is null!";
+        return;
+    }
+
+    // 只创建一次 TableManager
+    qDebug() << "Creating TableManager";
+    m_tableManager = new TableManager(ui->MaintableView, this);
+
     this->setWindowTitle("Memoria V2.2.8");
+    qDebug() << "Title set to 'Memoria V2.2.8'.";
+
+    // 确保MaintableView存在
+    if (!ui->MaintableView) {
+        qCritical() << "MaintableView is null!";
+        return;
+    }
 
     // 初始化路径记忆
     initPathMemory();
 
-    // 初始化表格
-    initTableView();
+    // 初始化表格 - 通过 TableManager
+    m_tableManager->initTableView();
 
     // 设置上下文菜单
     setupContextMenu();
@@ -50,55 +70,22 @@ MainWindow::MainWindow(QWidget *parent)
     // 更新状态显示
     updateExportStatusDisplay();
 
+    // 在MainWindow构造函数中添加：
+    qDebug() << "TableManager initialized with table view:" << ui->MaintableView;
 
 }
 
 MainWindow::~MainWindow()
 {
-    qDeleteAll(m_videoItems);
+    qDebug() << "~MainWindow() start";
+    qDebug() << "Deleting UI";
     delete ui;
+    qDebug() << "UI deleted";
+    qDebug() << "~MainWindow() end";  // 移除对videoItems和tableModel的操作
 }
 
 
 // ===================== 初始化函数 =====================
-void MainWindow::initTableView()
-{
-    // 设置表格模型
-    ui->MaintableView->setModel(m_tableModel);
-
-    // 初始化表头
-    updateTableHeaders();
-
-    // 添加交替行颜色
-    ui->MaintableView->setAlternatingRowColors(true);
-
-    // 设置表格属性
-    ui->MaintableView->setSelectionBehavior(QAbstractItemView::SelectRows);
-    ui->MaintableView->setSelectionMode(QAbstractItemView::ExtendedSelection);
-    ui->MaintableView->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
-    ui->MaintableView->verticalHeader()->setVisible(false);
-    // 修改后：仅允许双击编辑
-    ui->MaintableView->setEditTriggers(QAbstractItemView::DoubleClicked | QAbstractItemView::EditKeyPressed);
-
-    // 设置行选择样式
-    QString style = "QTableView::item:selected {"
-                    "    background-color: #FFFACD;"
-                    "    color: black;"
-                    "}";
-    ui->MaintableView->setStyleSheet(style);
-
-    // 启用标题编辑
-    connect(m_tableModel, &QStandardItemModel::itemChanged, this, [this](QStandardItem *item) {
-        int row = item->row();
-        if (row < m_videoItems.size()) {
-            TableColumns colType = m_currentColumnsOrder[item->column()];
-            if (colType == COL_TITLE) {
-                m_videoItems[row]->setTitle(item->text());
-            }
-        }
-    });
-}
-
 void MainWindow::setupContextMenu()
 {
     ui->MaintableView->setContextMenuPolicy(Qt::CustomContextMenu);
@@ -106,8 +93,12 @@ void MainWindow::setupContextMenu()
             this, &MainWindow::showContextMenu);
 }
 
+
 void MainWindow::initPathMemory()
 {
+    qDebug() << "Initializing path memory..."; // 调试点7
+    qDebug() << "Loading paths...";
+
     // 加载保存的路径
     QSettings settings;
     m_lastOutputPath = settings.value("LastOutputPath",
@@ -121,118 +112,12 @@ void MainWindow::initPathMemory()
     if (m_lastAudioPath.isEmpty()) m_lastAudioPath = QDir::homePath();
     if (m_lastOutputPath.isEmpty()) m_lastOutputPath = QStandardPaths::writableLocation(QStandardPaths::DownloadLocation);
     if (m_lastTitleFolderPath.isEmpty()) m_lastTitleFolderPath = QDir::homePath();
+
+    qDebug() << "Path memory initialized."; // 调试点8
+    qDebug() << "Last output path:" << m_lastOutputPath;
 }
 
 
-// ===================== 表格数据处理函数 =====================
-void MainWindow::updateTableHeaders()
-{
-    // 保存当前行数和列数
-    int rowCount = m_tableModel->rowCount();
-    int oldColumnCount = m_tableModel->columnCount();
-
-    // 获取可见列标题
-    QStringList headers = m_columnManager.getVisibleHeaders();
-
-    // 更新当前列的顺序列表
-    m_currentColumnsOrder.clear();
-    for (int i = 0; i < TOTAL_COLUMNS; ++i) {
-        TableColumns column = static_cast<TableColumns>(i);
-        if (m_columnManager.isColumnVisible(column)) {
-            m_currentColumnsOrder.append(column);
-        }
-    }
-
-    // 设置新表头
-    m_tableModel->setColumnCount(headers.size());
-    m_tableModel->setHorizontalHeaderLabels(headers);
-
-    // 添加新列（如果列数增加）
-    for (int row = 0; row < rowCount; ++row) {
-        for (int col = oldColumnCount; col < headers.size(); ++col) {
-            QStandardItem* item = new QStandardItem();
-            TableColumns colType = m_currentColumnsOrder[col];
-
-            if (colType == COL_PROGRESS) {
-                item->setData(0, Qt::DisplayRole);
-            } else if (colType == COL_TITLE) {
-                item->setFlags(item->flags() | Qt::ItemIsEditable);
-            } else {
-                item->setFlags(item->flags() & ~Qt::ItemIsEditable);
-            }
-
-            m_tableModel->setItem(row, col, item);
-        }
-        updateTableRow(row);
-    }
-
-    // 设置列宽策略
-    for (int col = 0; col < m_currentColumnsOrder.size(); ++col) {
-        TableColumns colType = m_currentColumnsOrder[col];
-        if (colType == COL_VIDEO_FILE || colType == COL_AUDIO_FILE) {
-            ui->MaintableView->horizontalHeader()->setSectionResizeMode(
-                col, QHeaderView::Interactive);
-            ui->MaintableView->setColumnWidth(col, 150);
-            ui->MaintableView->horizontalHeader()->setMinimumSectionSize(100);
-            ui->MaintableView->horizontalHeader()->setMaximumSectionSize(300);
-        } else {
-            ui->MaintableView->horizontalHeader()->setSectionResizeMode(
-                col, QHeaderView::ResizeToContents);
-        }
-    }
-
-    // 设置进度条委托
-    int progressCol = m_columnManager.getVisualIndex(COL_PROGRESS);
-    if (progressCol >= 0) {
-        // 删除旧的委托
-        QAbstractItemDelegate* oldDelegate = ui->MaintableView->itemDelegateForColumn(progressCol);
-        if (oldDelegate) {
-            ui->MaintableView->setItemDelegateForColumn(progressCol, nullptr);
-            delete oldDelegate;
-        }
-
-        // 设置新的委托
-        ui->MaintableView->setItemDelegateForColumn(
-            progressCol,
-            new ProgressBarDelegate(this)
-            );
-    }
-}
-
-void MainWindow::updateTableRow(int rowIndex)
-{
-    if (rowIndex < 0 || rowIndex >= m_videoItems.size() || rowIndex >= m_tableModel->rowCount())
-        return;
-
-    VideoItem* item = m_videoItems[rowIndex];
-    for (int col = 0; col < m_tableModel->columnCount(); ++col) {
-        TableColumns colType = m_currentColumnsOrder[col];
-        QStandardItem* tableItem = m_tableModel->item(rowIndex, col);
-
-        if (colType == COL_PROGRESS) {
-            int progress = item->data(colType).toInt();
-            tableItem->setData(progress, Qt::DisplayRole);
-        } else {
-            tableItem->setText(item->data(colType).toString());
-        }
-    }
-}
-
-void MainWindow::updateRowNumbers()
-{
-    for (int i = 0; i < m_videoItems.size(); ++i) {
-        m_videoItems[i]->setIndex(i + 1);
-        updateTableRow(i);
-    }
-}
-
-void MainWindow::clearModelData()
-{
-    m_tableModel->clear();
-    qDeleteAll(m_videoItems);
-    m_videoItems.clear();
-    updateTableHeaders();
-}
 
 // ===================== 路径记忆和设置 =====================
 void MainWindow::loadPathSettings()
@@ -276,48 +161,28 @@ void MainWindow::on_wholsoueflie_importButton_clicked()
 
 void MainWindow::on_settingButton_clicked()
 {
-    Setting_Dialog dialog(&m_columnManager, this);
+    qDebug() << "========== OPENING SETTING DIALOG ==========";
+    qDebug() << "Current row count:" << m_tableManager->rowCount();
+    qDebug() << "Current column count:" << m_tableManager->tableModel()->columnCount();
+
+    Setting_Dialog dialog(m_tableManager, this); // 传入TableManager
     dialog.setWindowTitle(tr("设置"));
 
     if (dialog.exec() == QDialog::Accepted) {
-        updateTableHeaders();
+        qDebug() << "Setting_Dialog accepted, updating table headers";
+        m_tableManager->updateTableHeaders(); // 通过TableManager更新表头
     }
+    qDebug() << "========== SETTING DIALOG CLOSED ==========";
 }
 
 void MainWindow::on_addlineButton_clicked()
 {
     // 创建新行对象
-    int newIndex = m_videoItems.size() + 1;
+    int newIndex = m_tableManager->videoItems().size() + 1;
     VideoItem* newItem = new VideoItem(newIndex, this);
-    m_videoItems.append(newItem);
 
-    // 添加新行到模型
-    QList<QStandardItem*> rowItems;
-    for (int col = 0; col < m_currentColumnsOrder.size(); ++col) {
-        QStandardItem* item = new QStandardItem();
-        item->setTextAlignment(Qt::AlignCenter);
-
-        TableColumns colType = m_currentColumnsOrder[col];
-        if (colType == COL_PROGRESS) {
-            item->setData(0, Qt::DisplayRole);
-        } else if (colType == COL_TITLE) {
-            item->setFlags(item->flags() | Qt::ItemIsEditable);
-            item->setText("<新项目>");
-        } else {
-            item->setFlags(item->flags() & ~Qt::ItemIsEditable);
-        }
-
-        rowItems.append(item);
-    }
-    m_tableModel->appendRow(rowItems);
-
-    // 连接数据变化信号
-    connect(newItem, &VideoItem::dataChanged, this, [this, newItem](){
-        int row = m_videoItems.indexOf(newItem);
-        if (row >= 0) updateTableRow(row);
-    });
-
-    updateRowNumbers();
+    // 使用 TableManager 添加新行
+    m_tableManager->addNewRow(newItem);
 }
 
 void MainWindow::on_delelineButton_clicked()
@@ -342,7 +207,7 @@ void MainWindow::on_outputButton_clicked()
     QString outputDir = QFileDialog::getExistingDirectory(
         this,
         tr("选择输出目录"),
-        m_lastOutputPath,  // 使用上次的路径
+        m_lastOutputPath,
         QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks
         );
 
@@ -372,22 +237,22 @@ void MainWindow::on_mergeStartBtn_clicked()
         // 使用记住的导出模式
         switch(m_exportMode) {
         case ExportSingle:
-            if (!m_videoItems.isEmpty()) {
-                m_pendingItems.append(m_videoItems.first());
+            if (!m_tableManager->videoItems().isEmpty()) {
+                m_pendingItems.append(m_tableManager->videoItems().first());
             }
             break;
         case ExportSelected:
         {
             QModelIndexList selected = ui->MaintableView->selectionModel()->selectedRows();
             for (const QModelIndex &index : selected) {
-                if (index.row() < m_videoItems.size()) {
-                    m_pendingItems.append(m_videoItems[index.row()]);
+                if (index.row() < m_tableManager->videoItems().size()) {
+                    m_pendingItems.append(m_tableManager->videoItems()[index.row()]);
                 }
             }
             break;
         }
         case ExportAll:
-            m_pendingItems = m_videoItems;
+            m_pendingItems = m_tableManager->videoItems();
             break;
         }
     } else {
@@ -404,22 +269,22 @@ void MainWindow::on_mergeStartBtn_clicked()
             // 根据选择的模式添加项目到待处理列表
             switch(newMode) {
             case ExportSingle:
-                if (!m_videoItems.isEmpty()) {
-                    m_pendingItems.append(m_videoItems.first());
+                if (!m_tableManager->videoItems().isEmpty()) {
+                    m_pendingItems.append(m_tableManager->videoItems().first());
                 }
                 break;
             case ExportSelected:
             {
                 QModelIndexList selected = ui->MaintableView->selectionModel()->selectedRows();
                 for (const QModelIndex &index : selected) {
-                    if (index.row() < m_videoItems.size()) {
-                        m_pendingItems.append(m_videoItems[index.row()]);
+                    if (index.row() < m_tableManager->videoItems().size()) {
+                        m_pendingItems.append(m_tableManager->videoItems()[index.row()]);
                     }
                 }
                 break;
             }
             case ExportAll:
-                m_pendingItems = m_videoItems;
+                m_pendingItems = m_tableManager->videoItems();
                 break;
             }
         } else {
@@ -437,32 +302,14 @@ void MainWindow::performDeleteOperation(DeleteMode mode)
 {
     if (mode == DeleteFirst) {
         // 删除第一行
-        if (m_videoItems.size() > 0) {
-            delete m_videoItems.takeAt(0);
-            m_tableModel->removeRow(0);
-            updateRowNumbers();
-        }
+        m_tableManager->removeRow(0);
     } else if (mode == DeleteSelected) {
         // 删除选中行
         QModelIndexList selected = ui->MaintableView->selectionModel()->selectedRows();
-        if (selected.isEmpty()) return;
-
-        // 倒序删除避免索引问题
-        std::sort(selected.begin(), selected.end(), [](const QModelIndex &a, const QModelIndex &b) {
-            return a.row() > b.row();
-        });
-
-        for (const QModelIndex &index : selected) {
-            int row = index.row();
-            if (row < m_videoItems.size()) {
-                delete m_videoItems.takeAt(row);
-                m_tableModel->removeRow(row);
-            }
-        }
-        updateRowNumbers();
+        m_tableManager->removeSelectedRows(selected);
     } else if (mode == DeleteAll) {
         // 删除所有行
-        clearModelData();
+        m_tableManager->removeAllRows();
     }
 }
 
@@ -479,17 +326,16 @@ void MainWindow::setDeleteSettings(DeleteMode mode, bool remember)
 
 
 // ===================== 导出操作管理 =====================
-// 在 mainwindow.cpp 中添加实现
 void MainWindow::onExportSingle()
 {
     QModelIndexList selected = ui->MaintableView->selectionModel()->selectedIndexes();
     if (!selected.isEmpty()) {
         int row = selected.first().row();
-        if (row >= 0 && row < m_videoItems.size()) {
+        if (row >= 0 && row < m_tableManager->videoItems().size()) {
             // 清空现有队列，只添加当前项
             m_pendingItems.clear();
             m_processingItems.clear();
-            m_pendingItems.append(m_videoItems[row]);
+            m_pendingItems.append(m_tableManager->videoItemAt(row));
 
             // 开始处理
             m_exportInProgress = true;
@@ -510,8 +356,8 @@ void MainWindow::onExportSelected()
         m_processingItems.clear();
 
         for (const QModelIndex &index : selected) {
-            if (index.row() < m_videoItems.size()) {
-                m_pendingItems.append(m_videoItems[index.row()]);
+            if (index.row() < m_tableManager->videoItems().size()) {
+               m_pendingItems.append(m_tableManager->videoItemAt(index.row()));
             }
         }
 
@@ -534,7 +380,7 @@ void MainWindow::exportSingleItem(int row)
     // 清空现有队列，添加所有项
     m_pendingItems.clear();
     m_processingItems.clear();
-    m_pendingItems = m_videoItems;
+    m_pendingItems = m_tableManager->videoItems();
 
     // 开始处理
     m_exportInProgress = true;
@@ -548,8 +394,8 @@ void MainWindow::exportSelectedItems()
     QModelIndexList selected = ui->MaintableView->selectionModel()->selectedRows();
     for (const QModelIndex &index : selected) {
         int row = index.row();
-        if (row >= 0 && row < m_videoItems.size()) {
-            VideoItem* item = m_videoItems[row];
+        if (row >= 0 && row < m_tableManager->videoItems().size()) {
+            VideoItem* item = m_tableManager->videoItems()[row];
             // 实现导出逻辑
         }
     }
@@ -560,7 +406,10 @@ void MainWindow::exportAllItems()
     // 清空现有队列，添加所有项
     m_pendingItems.clear();
     m_processingItems.clear();
-    m_pendingItems = m_videoItems;
+    m_pendingItems.clear();
+    for (int i = 0; i < m_tableManager->rowCount(); ++i) {
+        m_pendingItems.append(m_tableManager->videoItemAt(i));
+    }
 
     // 开始处理
     m_exportInProgress = true;
@@ -695,14 +544,15 @@ void MainWindow::processNextItem()
         qDebug() << "生成了默认标题:" << defaultTitle;
 
         // 更新表格显示
-        int row = m_videoItems.indexOf(item);
-        if (row >= 0) updateTableRow(row);
+        int row = m_tableManager->videoItems().indexOf(item);
+        if (row >= 0) m_tableManager->updateTableRow(row);
     }
 
     // 开始FFmpeg处理
     qDebug() << "开始FFmpeg处理";
     startFFmpegForItem(item);
 }
+
 
 void MainWindow::startFFmpegForItem(VideoItem* item)
 {
@@ -717,6 +567,7 @@ void MainWindow::startFFmpegForItem(VideoItem* item)
     // 3. 验证FFmpeg存在
     if (!QFile::exists(ffmpegExe)) {
         // 如果构建目录中没有，尝试原始位置（用于调试）
+        qDebug() << "FFmpeg executable not found at:" << ffmpegExe; // 调试点11
         QString originalFfmpeg = QCoreApplication::applicationDirPath() + "/../ffmpeg/bin/ffmpeg.exe";
 
         if (QFile::exists(originalFfmpeg)) {
@@ -952,6 +803,8 @@ void MainWindow::startFFmpegForItem(VideoItem* item)
             });
         }
     });
+    // 在startFFmpegForItem()中添加：
+    qDebug() << "FFmpeg path:" << ffmpegExe;
 }
 
 void MainWindow::parseFFmpegOutput(VideoItem* item, const QString& output)
@@ -982,27 +835,31 @@ void MainWindow::parseFFmpegOutput(VideoItem* item, const QString& output)
 
 void MainWindow::finishMergingProcess()
 {
-    qDebug() << "完成混流过程，总项目数:" << m_videoItems.size() << "失败数:" << m_failedCount;
+    qDebug() << "完成混流过程，总项目数:" << m_tableManager->rowCount() << "失败数:" << m_failedCount;
 
     m_exportInProgress = false;
 
     // 重置所有项目的错误状态
-    for (VideoItem* item : m_videoItems) {
-        item->setHasError(false);
+    for (int i = 0; i < m_tableManager->rowCount(); ++i) {
+        VideoItem* item = m_tableManager->videoItemAt(i);
+        if (item) {
+            item->setHasError(false);
+        }
     }
 
     // 显示完成消息
     QString message = QString("混流完成! 成功: %1, 失败: %2")
-                          .arg(m_videoItems.size() - m_failedCount)
+                          .arg(m_tableManager->rowCount() - m_failedCount)
                           .arg(m_failedCount);
 
     qDebug() << "显示完成消息:" << message;
     QMessageBox::information(this, "混流完成", message);
 }
 
+// 修改updateTotalProgress函数
 void MainWindow::updateTotalProgress()
 {
-    if (m_videoItems.isEmpty()) {
+    if (m_tableManager->rowCount() == 0) {
         ui->Total_progressBar->setValue(0);
         return;
     }
@@ -1010,11 +867,14 @@ void MainWindow::updateTotalProgress()
     int totalProgress = 0;
     int validItems = 0;
 
-    for (VideoItem* item : m_videoItems) {
-        int progress = item->progress();
-        if (progress >= 0 && !item->hasError()) { // 只计算有效进度且没有错误的项目
-            totalProgress += progress;
-            validItems++;
+    for (int i = 0; i < m_tableManager->rowCount(); ++i) {
+        VideoItem* item = m_tableManager->videoItemAt(i);
+        if (item) {
+            int progress = item->progress();
+            if (progress >= 0 && !item->hasError()) {
+                totalProgress += progress;
+                validItems++;
+            }
         }
     }
 
@@ -1047,15 +907,17 @@ void MainWindow::showContextMenu(const QPoint &pos)
     menu.addSeparator(); // 删除组后的分隔线
 
     // ===================== 导入组 =====================
-    // 修复列类型判断逻辑
-    TableColumns column = COL_INDEX;
-    if (index.column() >=0 && index.column() < m_currentColumnsOrder.size()) {
-        column = m_currentColumnsOrder[index.column()];
-    }
+    // 这里需要修改，因为 m_currentColumnsOrder 已经迁移到 TableManager 中
+    // 您需要在 TableManager 中添加一个方法来获取当前列的顺序
+    // TableColumns column = COL_INDEX;
+    // if (index.column() >=0 && index.column() < m_tableManager->currentColumnsOrder().size()) {
+    //     column = m_tableManager->currentColumnsOrder()[index.column()];
+    // }
 
     QAction *importFile = menu.addAction("导入...");
     importFile->setData("import_file");
-    importFile->setEnabled(column == COL_VIDEO_FILE || column == COL_AUDIO_FILE);
+    // importFile->setEnabled(column == COL_VIDEO_FILE || column == COL_AUDIO_FILE);
+    importFile->setEnabled(true); // 暂时设置为总是启用
 
     QAction *importTitle = menu.addAction("导入标题文件夹");
     importTitle->setData("import_title");
@@ -1074,28 +936,30 @@ void MainWindow::showContextMenu(const QPoint &pos)
         onPreviewAction(index.row());
     });
 
-    // 连接删除操作（原代码）
+    // // 连接删除操作
+    // connect(deleteCurrent, &QAction::triggered, this, [this, index]() {
+    //     int row = index.row();
+    //     if (row >= 0 && row < m_tableManager->videoItems().size()) {
+    //         delete m_tableManager->videoItems().takeAt(row);
+    //         m_tableManager->tableModel()->removeRow(row);
+    //         m_tableManager->updateRowNumbers();
+    //     }
+    // });
+
+    // 在showContextMenu函数中，修改删除当前行的操作：
     connect(deleteCurrent, &QAction::triggered, this, [this, index]() {
         int row = index.row();
-        if (row >= 0 && row < m_videoItems.size()) {
-            delete m_videoItems.takeAt(row);
-            m_tableModel->removeRow(row);
-            updateRowNumbers();
-        }
-    });
-
-    connect(deleteSelected, &QAction::triggered, this, [this]() {
-        performDeleteOperation(DeleteSelected);
+        m_tableManager->removeRow(row); // 使用TableManager的方法
     });
 
     connect(deleteAll, &QAction::triggered, this, [this]() {
         performDeleteOperation(DeleteAll);
     });
 
-    // 连接导入操作（原代码）
+    // 连接导入操作
     connect(&menu, &QMenu::triggered, this, &MainWindow::onCustomContextMenuAction);
 
-    // 连接导出操作（新增）
+    // 连接导出操作
     connect(exportSingle, &QAction::triggered, this, &MainWindow::onExportSingle);
     connect(exportSelected, &QAction::triggered, this, &MainWindow::onExportSelected);
     connect(exportAll, &QAction::triggered, this, &MainWindow::onExportAll);
@@ -1103,9 +967,14 @@ void MainWindow::showContextMenu(const QPoint &pos)
     menu.exec(ui->MaintableView->viewport()->mapToGlobal(pos));
 }
 
+
+
+// 修改onPreviewAction函数
 void MainWindow::onPreviewAction(int row)
 {
-    if (row < 0 || row >= m_videoItems.size()) {
+    // 修改后：使用 videoItemAt(row)
+    VideoItem* item = m_tableManager->videoItemAt(row);
+    if (!item) {
         QMessageBox::warning(this, "预览", "无效的行索引");
         return;
     }
@@ -1120,14 +989,14 @@ void MainWindow::onPreviewAction(int row)
     m_playbackWidget = new Playback_Widge(this);
 
     // 使用 data(COL_TITLE) 方法获取标题
-    QString title = m_videoItems[row]->data(COL_TITLE).toString();
+    QString title = item->data(COL_TITLE).toString();
     m_playbackWidget->setWindowTitle("视频预览 - " + title);
 
     m_playbackWidget->setWindowFlags(Qt::Window);
     m_playbackWidget->show();
 
     // 这里可以添加代码将选中的视频项数据传递给预览窗口
-    // 例如：m_playbackWidget->setVideoItem(m_videoItems[row]);
+    // 例如：m_playbackWidget->setVideoItem(item);
 }
 
 void MainWindow::onCustomContextMenuAction(QAction* action)
@@ -1147,12 +1016,11 @@ void MainWindow::onCustomContextMenuAction(QAction* action)
 void MainWindow::handleImportData(const QString& videoPath, const QString& audioPath, const QString& title)
 {
     // 创建新行对象
-    int newIndex = m_videoItems.size() + 1;
+    int newIndex = m_tableManager->rowCount() + 1;
     VideoItem* newItem = new VideoItem(newIndex, this);
     newItem->setHasError(false); // 确保新项目没有错误状态
-    m_videoItems.append(newItem);
 
-    // 设置数据 - 使用 setData 方法而不是 setVideoFile/setAudioFile
+    // 设置数据
     newItem->setTitle(title);
     if (!videoPath.isEmpty()) {
         newItem->setData(COL_VIDEO_FILE, videoPath);
@@ -1161,39 +1029,8 @@ void MainWindow::handleImportData(const QString& videoPath, const QString& audio
         newItem->setData(COL_AUDIO_FILE, audioPath);
     }
 
-    // 添加新行到模型
-    QList<QStandardItem*> rowItems;
-    for (int col = 0; col < m_currentColumnsOrder.size(); ++col) {
-        QStandardItem* item = new QStandardItem();
-        item->setTextAlignment(Qt::AlignCenter);
-
-        TableColumns colType = m_currentColumnsOrder[col];
-        if (colType == COL_PROGRESS) {
-            item->setData(0, Qt::DisplayRole);
-        } else if (colType == COL_TITLE) {
-            item->setFlags(item->flags() | Qt::ItemIsEditable);
-            item->setText(title);
-        } else if (colType == COL_VIDEO_FILE && !videoPath.isEmpty()) {
-            item->setText(videoPath);
-            item->setFlags(item->flags() & ~Qt::ItemIsEditable);
-        } else if (colType == COL_AUDIO_FILE && !audioPath.isEmpty()) {
-            item->setText(audioPath);
-            item->setFlags(item->flags() & ~Qt::ItemIsEditable);
-        } else {
-            item->setFlags(item->flags() & ~Qt::ItemIsEditable);
-        }
-
-        rowItems.append(item);
-    }
-    m_tableModel->appendRow(rowItems);
-
-    // 连接数据变化信号
-    connect(newItem, &VideoItem::dataChanged, this, [this, newItem](){
-        int row = m_videoItems.indexOf(newItem);
-        if (row >= 0) updateTableRow(row);
-    });
-
-    updateRowNumbers();
+    // 使用 TableManager 添加新行
+    m_tableManager->addNewRow(newItem);
 
     // 调用FFmpeg进行预加载操作
     if (!videoPath.isEmpty() || !audioPath.isEmpty()) {

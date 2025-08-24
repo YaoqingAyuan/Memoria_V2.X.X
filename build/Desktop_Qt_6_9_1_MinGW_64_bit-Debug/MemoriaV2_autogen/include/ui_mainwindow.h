@@ -20,6 +20,7 @@
 #include <QtWidgets/QPushButton>
 #include <QtWidgets/QStatusBar>
 #include <QtWidgets/QTableView>
+#include <QtWidgets/QVBoxLayout>
 #include <QtWidgets/QWidget>
 
 QT_BEGIN_NAMESPACE
@@ -29,16 +30,18 @@ class Ui_MainWindow
 public:
     QWidget *centralwidget;
     QPushButton *singleline_importButton;
-    QTableView *MaintableView;
     QPushButton *wholsoueflie_importButton;
     QPushButton *settingButton;
     QPushButton *addlineButton;
     QPushButton *delelineButton;
-    QProgressBar *Total_progressBar;
     QLabel *label;
     QLineEdit *outputAdd_Edit;
     QPushButton *outputButton;
     QPushButton *mergeStartBtn;
+    QWidget *widget;
+    QVBoxLayout *verticalLayout;
+    QProgressBar *Total_progressBar;
+    QTableView *MaintableView;
     QMenuBar *menubar;
     QStatusBar *statusbar;
 
@@ -52,10 +55,6 @@ public:
         singleline_importButton = new QPushButton(centralwidget);
         singleline_importButton->setObjectName("singleline_importButton");
         singleline_importButton->setGeometry(QRect(60, 110, 121, 21));
-        MaintableView = new QTableView(centralwidget);
-        MaintableView->setObjectName("MaintableView");
-        MaintableView->setGeometry(QRect(0, 251, 801, 311));
-        MaintableView->setSelectionBehavior(QAbstractItemView::SelectionBehavior::SelectRows);
         wholsoueflie_importButton = new QPushButton(centralwidget);
         wholsoueflie_importButton->setObjectName("wholsoueflie_importButton");
         wholsoueflie_importButton->setGeometry(QRect(60, 150, 121, 21));
@@ -72,10 +71,6 @@ public:
         delelineButton->setObjectName("delelineButton");
         delelineButton->setGeometry(QRect(150, 70, 31, 21));
         delelineButton->setFont(font);
-        Total_progressBar = new QProgressBar(centralwidget);
-        Total_progressBar->setObjectName("Total_progressBar");
-        Total_progressBar->setGeometry(QRect(0, 230, 801, 23));
-        Total_progressBar->setValue(24);
         label = new QLabel(centralwidget);
         label->setObjectName("label");
         label->setGeometry(QRect(270, 110, 51, 21));
@@ -95,6 +90,24 @@ public:
         QFont font2;
         font2.setPointSize(12);
         mergeStartBtn->setFont(font2);
+        widget = new QWidget(centralwidget);
+        widget->setObjectName("widget");
+        widget->setGeometry(QRect(-10, 230, 811, 351));
+        verticalLayout = new QVBoxLayout(widget);
+        verticalLayout->setObjectName("verticalLayout");
+        verticalLayout->setContentsMargins(0, 0, 0, 0);
+        Total_progressBar = new QProgressBar(widget);
+        Total_progressBar->setObjectName("Total_progressBar");
+        Total_progressBar->setValue(24);
+
+        verticalLayout->addWidget(Total_progressBar);
+
+        MaintableView = new QTableView(widget);
+        MaintableView->setObjectName("MaintableView");
+        MaintableView->setSelectionBehavior(QAbstractItemView::SelectionBehavior::SelectRows);
+
+        verticalLayout->addWidget(MaintableView);
+
         MainWindow->setCentralWidget(centralwidget);
         menubar = new QMenuBar(MainWindow);
         menubar->setObjectName("menubar");

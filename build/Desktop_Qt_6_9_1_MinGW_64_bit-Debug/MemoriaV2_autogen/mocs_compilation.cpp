@@ -7,4 +7,5 @@
 #include "2NRMJ5X7RK/moc_setting_dialog.cpp"
 #include "2NRMJ5X7RK/moc_singleline_import_dialog.cpp"
 #include "EWIEGA46WW/moc_mainwindow.cpp"
+#include "DWVBZFKGEL/moc_mergemanager.cpp"
 #include "EWIEGA46WW/moc_playback_widge.cpp"

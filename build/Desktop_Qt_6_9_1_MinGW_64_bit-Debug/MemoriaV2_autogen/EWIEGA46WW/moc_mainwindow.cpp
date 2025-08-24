@@ -62,7 +62,10 @@ template <> constexpr inline auto MainWindow::qt_create_metaobjectdata<qt_meta_t
         "handleImportData",
         "videoPath",
         "audioPath",
-        "title"
+        "title",
+        "showMergeResultMessage",
+        "successCount",
+        "failedCount"
     };
 
     QtMocHelpers::UintData qt_methods {
@@ -106,6 +109,10 @@ template <> constexpr inline auto MainWindow::qt_create_metaobjectdata<qt_meta_t
         QtMocHelpers::SlotData<void(const QString &, const QString &, const QString &)>(21, 2, QMC::AccessPrivate, QMetaType::Void, {{
             { QMetaType::QString, 22 }, { QMetaType::QString, 23 }, { QMetaType::QString, 24 },
         }}),
+        // Slot 'showMergeResultMessage'
+        QtMocHelpers::SlotData<void(int, int)>(25, 2, QMC::AccessPrivate, QMetaType::Void, {{
+            { QMetaType::Int, 26 }, { QMetaType::Int, 27 },
+        }}),
     };
     QtMocHelpers::UintData qt_properties {
     };
@@ -144,6 +151,7 @@ void MainWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, 
         case 12: _t->on_mergeStartBtn_clicked(); break;
         case 13: _t->onPreviewAction((*reinterpret_cast< std::add_pointer_t<int>>(_a[1]))); break;
         case 14: _t->handleImportData((*reinterpret_cast< std::add_pointer_t<QString>>(_a[1])),(*reinterpret_cast< std::add_pointer_t<QString>>(_a[2])),(*reinterpret_cast< std::add_pointer_t<QString>>(_a[3]))); break;
+        case 15: _t->showMergeResultMessage((*reinterpret_cast< std::add_pointer_t<int>>(_a[1])),(*reinterpret_cast< std::add_pointer_t<int>>(_a[2]))); break;
         default: ;
         }
     }
@@ -184,14 +192,14 @@ int MainWindow::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 15)
+        if (_id < 16)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 15;
+        _id -= 16;
     }
     if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 15)
+        if (_id < 16)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 15;
+        _id -= 16;
     }
     return _id;
 }

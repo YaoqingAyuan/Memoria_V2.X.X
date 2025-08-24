@@ -57,6 +57,8 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
         data_models/tablemanager.h data_models/tablemanager.cpp
+        managers/mergemanager.h managers/mergemanager.cpp
+        managers/contextmenumanager.h managers/contextmenumanager.cpp
     )
 
     # 添加复制 FFmpeg 可执行文件的命令

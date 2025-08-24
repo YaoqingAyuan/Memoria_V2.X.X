@@ -145,6 +145,22 @@ build CMakeFiles/MemoriaV2.dir/data_models/tablemanager.cpp.obj: CXX_COMPILER__M
   OBJECT_DIR = CMakeFiles\MemoriaV2.dir
   OBJECT_FILE_DIR = CMakeFiles\MemoriaV2.dir\data_models
 
+build CMakeFiles/MemoriaV2.dir/managers/mergemanager.cpp.obj: CXX_COMPILER__MemoriaV2_unscanned_Debug D$:/Qt$ Projects/MemoriaV2/managers/mergemanager.cpp || cmake_object_order_depends_target_MemoriaV2
+  DEFINES = -DMINGW_HAS_SECURE_API=1 -DQT_CORE_LIB -DQT_GUI_LIB -DQT_NEEDS_QMAIN -DQT_WIDGETS_LIB -DUNICODE -DWIN32 -DWIN64 -D_ENABLE_EXTENDED_ALIGNED_STORAGE -D_UNICODE -D_WIN64
+  DEP_FILE = CMakeFiles\MemoriaV2.dir\managers\mergemanager.cpp.obj.d
+  FLAGS = -DQT_QML_DEBUG -g -std=gnu++17 -fdiagnostics-color=always
+  INCLUDES = -I"D:/Qt Projects/MemoriaV2/build/Desktop_Qt_6_9_1_MinGW_64_bit-Debug/MemoriaV2_autogen/include" -I"D:/Qt Projects/MemoriaV2" -isystem D:/Qt/6.9.1/mingw_64/include/QtCore -isystem D:/Qt/6.9.1/mingw_64/include -isystem D:/Qt/6.9.1/mingw_64/mkspecs/win32-g++ -isystem D:/Qt/6.9.1/mingw_64/include/QtWidgets -isystem D:/Qt/6.9.1/mingw_64/include/QtGui
+  OBJECT_DIR = CMakeFiles\MemoriaV2.dir
+  OBJECT_FILE_DIR = CMakeFiles\MemoriaV2.dir\managers
+
+build CMakeFiles/MemoriaV2.dir/managers/contextmenumanager.cpp.obj: CXX_COMPILER__MemoriaV2_unscanned_Debug D$:/Qt$ Projects/MemoriaV2/managers/contextmenumanager.cpp || cmake_object_order_depends_target_MemoriaV2
+  DEFINES = -DMINGW_HAS_SECURE_API=1 -DQT_CORE_LIB -DQT_GUI_LIB -DQT_NEEDS_QMAIN -DQT_WIDGETS_LIB -DUNICODE -DWIN32 -DWIN64 -D_ENABLE_EXTENDED_ALIGNED_STORAGE -D_UNICODE -D_WIN64
+  DEP_FILE = CMakeFiles\MemoriaV2.dir\managers\contextmenumanager.cpp.obj.d
+  FLAGS = -DQT_QML_DEBUG -g -std=gnu++17 -fdiagnostics-color=always
+  INCLUDES = -I"D:/Qt Projects/MemoriaV2/build/Desktop_Qt_6_9_1_MinGW_64_bit-Debug/MemoriaV2_autogen/include" -I"D:/Qt Projects/MemoriaV2" -isystem D:/Qt/6.9.1/mingw_64/include/QtCore -isystem D:/Qt/6.9.1/mingw_64/include -isystem D:/Qt/6.9.1/mingw_64/mkspecs/win32-g++ -isystem D:/Qt/6.9.1/mingw_64/include/QtWidgets -isystem D:/Qt/6.9.1/mingw_64/include/QtGui
+  OBJECT_DIR = CMakeFiles\MemoriaV2.dir
+  OBJECT_FILE_DIR = CMakeFiles\MemoriaV2.dir\managers
+
 
 # =============================================================================
 # Link build statements for EXECUTABLE target MemoriaV2
@@ -153,7 +169,7 @@ build CMakeFiles/MemoriaV2.dir/data_models/tablemanager.cpp.obj: CXX_COMPILER__M
 #############################################
 # Link the executable MemoriaV2.exe
 
-build MemoriaV2.exe: CXX_EXECUTABLE_LINKER__MemoriaV2_Debug CMakeFiles/MemoriaV2.dir/MemoriaV2_autogen/mocs_compilation.cpp.obj CMakeFiles/MemoriaV2.dir/main.cpp.obj CMakeFiles/MemoriaV2.dir/mainwindow.cpp.obj CMakeFiles/MemoriaV2.dir/playback_widge.cpp.obj CMakeFiles/MemoriaV2.dir/dialogs/setting_dialog.cpp.obj CMakeFiles/MemoriaV2.dir/dialogs/singleline_import_dialog.cpp.obj CMakeFiles/MemoriaV2.dir/data_models/tablecolumns.cpp.obj CMakeFiles/MemoriaV2.dir/data_models/videoitem.cpp.obj CMakeFiles/MemoriaV2.dir/delegates/progressbardelegate.cpp.obj CMakeFiles/MemoriaV2.dir/dialogs/del_setting_dialog.cpp.obj CMakeFiles/MemoriaV2.dir/dialogs/export_setting_dialog.cpp.obj CMakeFiles/MemoriaV2.dir/data_models/tablemanager.cpp.obj | D$:/Qt/6.9.1/mingw_64/lib/libQt6Widgets.a D$:/Qt/6.9.1/mingw_64/lib/libQt6Gui.a D$:/Qt/6.9.1/mingw_64/lib/libQt6Core.a D$:/Qt/6.9.1/mingw_64/lib/libQt6EntryPoint.a || MemoriaV2_autogen MemoriaV2_autogen_timestamp_deps
+build MemoriaV2.exe: CXX_EXECUTABLE_LINKER__MemoriaV2_Debug CMakeFiles/MemoriaV2.dir/MemoriaV2_autogen/mocs_compilation.cpp.obj CMakeFiles/MemoriaV2.dir/main.cpp.obj CMakeFiles/MemoriaV2.dir/mainwindow.cpp.obj CMakeFiles/MemoriaV2.dir/playback_widge.cpp.obj CMakeFiles/MemoriaV2.dir/dialogs/setting_dialog.cpp.obj CMakeFiles/MemoriaV2.dir/dialogs/singleline_import_dialog.cpp.obj CMakeFiles/MemoriaV2.dir/data_models/tablecolumns.cpp.obj CMakeFiles/MemoriaV2.dir/data_models/videoitem.cpp.obj CMakeFiles/MemoriaV2.dir/delegates/progressbardelegate.cpp.obj CMakeFiles/MemoriaV2.dir/dialogs/del_setting_dialog.cpp.obj CMakeFiles/MemoriaV2.dir/dialogs/export_setting_dialog.cpp.obj CMakeFiles/MemoriaV2.dir/data_models/tablemanager.cpp.obj CMakeFiles/MemoriaV2.dir/managers/mergemanager.cpp.obj CMakeFiles/MemoriaV2.dir/managers/contextmenumanager.cpp.obj | D$:/Qt/6.9.1/mingw_64/lib/libQt6Widgets.a D$:/Qt/6.9.1/mingw_64/lib/libQt6Gui.a D$:/Qt/6.9.1/mingw_64/lib/libQt6Core.a D$:/Qt/6.9.1/mingw_64/lib/libQt6EntryPoint.a || MemoriaV2_autogen MemoriaV2_autogen_timestamp_deps
   FLAGS = -DQT_QML_DEBUG -g
   LINK_FLAGS = -mwindows
   LINK_LIBRARIES = D:/Qt/6.9.1/mingw_64/lib/libQt6Widgets.a  D:/Qt/6.9.1/mingw_64/lib/libQt6Gui.a  D:/Qt/6.9.1/mingw_64/lib/libQt6Core.a  -lmpr  -luserenv  -lmingw32  D:/Qt/6.9.1/mingw_64/lib/libQt6EntryPoint.a  -lshell32  -ld3d11  -ldxgi  -ldxguid  -ld3d12  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32

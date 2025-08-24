@@ -471,6 +471,18 @@
 			null
 		],
 		[
+			"D:/Qt Projects/MemoriaV2/managers/contextmenumanager.h",
+			"MU",
+			"DWVBZFKGEL/moc_contextmenumanager.cpp",
+			null
+		],
+		[
+			"D:/Qt Projects/MemoriaV2/managers/mergemanager.h",
+			"MU",
+			"DWVBZFKGEL/moc_mergemanager.cpp",
+			null
+		],
+		[
 			"D:/Qt Projects/MemoriaV2/playback_widge.h",
 			"MU",
 			"EWIEGA46WW/moc_playback_widge.cpp",
@@ -571,6 +583,12 @@
 		],
 		[ "D:/Qt Projects/MemoriaV2/main.cpp", "MU", null ],
 		[ "D:/Qt Projects/MemoriaV2/mainwindow.cpp", "MU", null ],
+		[
+			"D:/Qt Projects/MemoriaV2/managers/contextmenumanager.cpp",
+			"MU",
+			null
+		],
+		[ "D:/Qt Projects/MemoriaV2/managers/mergemanager.cpp", "MU", null ],
 		[ "D:/Qt Projects/MemoriaV2/playback_widge.cpp", "MU", null ]
 	],
 	"UIC_OPTIONS" : [],

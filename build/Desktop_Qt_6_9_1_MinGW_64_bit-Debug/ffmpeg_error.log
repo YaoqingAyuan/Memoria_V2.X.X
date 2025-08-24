@@ -1,0 +1,5 @@
+Exit code: -22
+Command: D:/Qt Projects/MemoriaV2/build/Desktop_Qt_6_9_1_MinGW_64_bit-Debug/ffmpeg.exe -i C:/Users/liuqi/Desktop/缓存导出控制台/标题文件夹批量导出测试文档/《我本是高山》投资方情况精彩绝伦/video.m4s -i C:/Users/liuqi/Desktop/缓存导出控制台/标题文件夹批量导出测试文档/《我本是高山》投资方情况精彩绝伦/ -c:v copy -c:a copy -f mp4 -y C:/Users/liuqi/Desktop/缓存导出控制台/导出测试/《我本是高山》投资方情况精彩绝伦.mp4
+Error output:
+
+

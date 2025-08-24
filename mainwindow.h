@@ -7,6 +7,7 @@
 #include "delegates/deletemode.h"
 #include "delegates/exportmode.h"
 #include "playback_widge.h"
+#include "managers/mergemanager.h" // 添加这行包含MergeManager的头文件
 
 // 添加前向声明
 class export_setting_dialog;
@@ -62,6 +63,7 @@ private slots:
     void onPreviewAction(int row);
 
     void handleImportData(const QString& videoPath, const QString& audioPath, const QString& title);
+    void showMergeResultMessage(int successCount, int failedCount);
 
 private:
     Ui::MainWindow *ui;
@@ -109,11 +111,7 @@ private:
 
     // 混流相关方法
     void startMergingProcess();
-    void processNextItem();
-    void startFFmpegForItem(VideoItem* item);
     void updateTotalProgress();
-    void parseFFmpegOutput(VideoItem* item, const QString& output);
-    void finishMergingProcess(); // 添加完成处理函数声明
 
     // 删除操作管理
     void performDeleteOperation(DeleteMode mode);
@@ -125,6 +123,8 @@ private:
 
     // 设置上下文菜单
     void setupContextMenu();
+
+    MergeManager* m_mergeManager; // 添加 MergeManager 成员变量
 };
 
 #endif // MAINWINDOW_H

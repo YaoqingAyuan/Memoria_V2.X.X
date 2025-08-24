@@ -5,8 +5,11 @@ D:/Qt\ Projects/MemoriaV2/build/Desktop_Qt_6_9_1_MinGW_64_bit-Debug/MemoriaV2_au
   D:/Qt\ Projects/MemoriaV2/data_models/videoitem.h \
   D:/Qt\ Projects/MemoriaV2/delegates/deletemode.h \
   D:/Qt\ Projects/MemoriaV2/delegates/exportmode.h \
+  D:/Qt\ Projects/MemoriaV2/managers/mergemanager.h \
   D:/Qt\ Projects/MemoriaV2/playback_widge.h \
+  D:/Qt/6.9.1/mingw_64/include/QtCore/QList \
   D:/Qt/6.9.1/mingw_64/include/QtCore/QObject \
+  D:/Qt/6.9.1/mingw_64/include/QtCore/QProcess \
   D:/Qt/6.9.1/mingw_64/include/QtCore/QSet \
   D:/Qt/6.9.1/mingw_64/include/QtCore/QStringList \
   D:/Qt/6.9.1/mingw_64/include/QtCore/QVariant \
@@ -59,6 +62,7 @@ D:/Qt\ Projects/MemoriaV2/build/Desktop_Qt_6_9_1_MinGW_64_bit-Debug/MemoriaV2_au
   D:/Qt/6.9.1/mingw_64/include/QtCore/qglobalstatic.h \
   D:/Qt/6.9.1/mingw_64/include/QtCore/qhash.h \
   D:/Qt/6.9.1/mingw_64/include/QtCore/qhashfunctions.h \
+  D:/Qt/6.9.1/mingw_64/include/QtCore/qiodevice.h \
   D:/Qt/6.9.1/mingw_64/include/QtCore/qiodevicebase.h \
   D:/Qt/6.9.1/mingw_64/include/QtCore/qitemselectionmodel.h \
   D:/Qt/6.9.1/mingw_64/include/QtCore/qiterable.h \
@@ -84,6 +88,7 @@ D:/Qt\ Projects/MemoriaV2/build/Desktop_Qt_6_9_1_MinGW_64_bit-Debug/MemoriaV2_au
   D:/Qt/6.9.1/mingw_64/include/QtCore/qoverload.h \
   D:/Qt/6.9.1/mingw_64/include/QtCore/qpair.h \
   D:/Qt/6.9.1/mingw_64/include/QtCore/qpoint.h \
+  D:/Qt/6.9.1/mingw_64/include/QtCore/qprocess.h \
   D:/Qt/6.9.1/mingw_64/include/QtCore/qprocessordetection.h \
   D:/Qt/6.9.1/mingw_64/include/QtCore/qrect.h \
   D:/Qt/6.9.1/mingw_64/include/QtCore/qrefcount.h \

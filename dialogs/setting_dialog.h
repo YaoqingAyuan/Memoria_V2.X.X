@@ -6,6 +6,7 @@
 #include <QCheckBox>
 #include "delegates/deletemode.h"
 #include "delegates/exportmode.h"
+#include "data_models/tablemanager.h" // 添加包含
 
 class MainWindow;
 
@@ -18,7 +19,8 @@ class Setting_Dialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit Setting_Dialog(ColumnManager* columnManager, QWidget *parent = nullptr);
+    // 修改构造函数参数，使用 TableManager 而不是 ColumnManager
+    explicit Setting_Dialog(TableManager* tableManager, QWidget *parent = nullptr);
     ~Setting_Dialog();
 
 private slots:
@@ -34,8 +36,8 @@ private slots:
 
 private:
     Ui::Setting_Dialog *ui;
-    ColumnManager* m_columnManager;
-    QCheckBox* m_selectAllCheckBox;
+    TableManager* m_tableManager; // 改为 TableManager 指针
+    QCheckBox* m_selectAllCheckBox; // 添加这行声明
 
     // 添加删除模式相关成员
     DeleteMode m_currentDeleteMode;

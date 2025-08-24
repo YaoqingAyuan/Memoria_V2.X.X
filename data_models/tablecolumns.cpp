@@ -1,4 +1,5 @@
 #include "tablecolumns.h"
+#include <qdebug.h>
 
 // ===================== 构造函数 =====================
 ColumnManager::ColumnManager() {

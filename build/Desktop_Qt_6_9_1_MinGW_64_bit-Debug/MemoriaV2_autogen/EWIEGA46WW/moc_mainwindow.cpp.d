@@ -1,12 +1,12 @@
 D:/Qt\ Projects/MemoriaV2/build/Desktop_Qt_6_9_1_MinGW_64_bit-Debug/MemoriaV2_autogen/EWIEGA46WW/moc_mainwindow.cpp: D:/Qt\ Projects/MemoriaV2/mainwindow.h \
   D:/Qt\ Projects/MemoriaV2/build/Desktop_Qt_6_9_1_MinGW_64_bit-Debug/MemoriaV2_autogen/moc_predefs.h \
   D:/Qt\ Projects/MemoriaV2/data_models/tablecolumns.h \
+  D:/Qt\ Projects/MemoriaV2/data_models/tablemanager.h \
   D:/Qt\ Projects/MemoriaV2/data_models/videoitem.h \
   D:/Qt\ Projects/MemoriaV2/delegates/deletemode.h \
   D:/Qt\ Projects/MemoriaV2/delegates/exportmode.h \
   D:/Qt\ Projects/MemoriaV2/playback_widge.h \
   D:/Qt/6.9.1/mingw_64/include/QtCore/QObject \
-  D:/Qt/6.9.1/mingw_64/include/QtCore/QProcess \
   D:/Qt/6.9.1/mingw_64/include/QtCore/QSet \
   D:/Qt/6.9.1/mingw_64/include/QtCore/QStringList \
   D:/Qt/6.9.1/mingw_64/include/QtCore/QVariant \
@@ -59,13 +59,14 @@ D:/Qt\ Projects/MemoriaV2/build/Desktop_Qt_6_9_1_MinGW_64_bit-Debug/MemoriaV2_au
   D:/Qt/6.9.1/mingw_64/include/QtCore/qglobalstatic.h \
   D:/Qt/6.9.1/mingw_64/include/QtCore/qhash.h \
   D:/Qt/6.9.1/mingw_64/include/QtCore/qhashfunctions.h \
-  D:/Qt/6.9.1/mingw_64/include/QtCore/qiodevice.h \
   D:/Qt/6.9.1/mingw_64/include/QtCore/qiodevicebase.h \
+  D:/Qt/6.9.1/mingw_64/include/QtCore/qitemselectionmodel.h \
   D:/Qt/6.9.1/mingw_64/include/QtCore/qiterable.h \
   D:/Qt/6.9.1/mingw_64/include/QtCore/qiterator.h \
   D:/Qt/6.9.1/mingw_64/include/QtCore/qlatin1stringview.h \
   D:/Qt/6.9.1/mingw_64/include/QtCore/qline.h \
   D:/Qt/6.9.1/mingw_64/include/QtCore/qlist.h \
+  D:/Qt/6.9.1/mingw_64/include/QtCore/qlocale.h \
   D:/Qt/6.9.1/mingw_64/include/QtCore/qlogging.h \
   D:/Qt/6.9.1/mingw_64/include/QtCore/qmalloc.h \
   D:/Qt/6.9.1/mingw_64/include/QtCore/qmap.h \
@@ -83,10 +84,10 @@ D:/Qt\ Projects/MemoriaV2/build/Desktop_Qt_6_9_1_MinGW_64_bit-Debug/MemoriaV2_au
   D:/Qt/6.9.1/mingw_64/include/QtCore/qoverload.h \
   D:/Qt/6.9.1/mingw_64/include/QtCore/qpair.h \
   D:/Qt/6.9.1/mingw_64/include/QtCore/qpoint.h \
-  D:/Qt/6.9.1/mingw_64/include/QtCore/qprocess.h \
   D:/Qt/6.9.1/mingw_64/include/QtCore/qprocessordetection.h \
   D:/Qt/6.9.1/mingw_64/include/QtCore/qrect.h \
   D:/Qt/6.9.1/mingw_64/include/QtCore/qrefcount.h \
+  D:/Qt/6.9.1/mingw_64/include/QtCore/qregularexpression.h \
   D:/Qt/6.9.1/mingw_64/include/QtCore/qscopedpointer.h \
   D:/Qt/6.9.1/mingw_64/include/QtCore/qscopeguard.h \
   D:/Qt/6.9.1/mingw_64/include/QtCore/qset.h \
@@ -166,15 +167,28 @@ D:/Qt\ Projects/MemoriaV2/build/Desktop_Qt_6_9_1_MinGW_64_bit-Debug/MemoriaV2_au
   D:/Qt/6.9.1/mingw_64/include/QtGui/qtguiexports.h \
   D:/Qt/6.9.1/mingw_64/include/QtGui/qtguiglobal.h \
   D:/Qt/6.9.1/mingw_64/include/QtGui/qtransform.h \
+  D:/Qt/6.9.1/mingw_64/include/QtGui/qvalidator.h \
   D:/Qt/6.9.1/mingw_64/include/QtGui/qwindowdefs.h \
   D:/Qt/6.9.1/mingw_64/include/QtGui/qwindowdefs_win.h \
   D:/Qt/6.9.1/mingw_64/include/QtWidgets/QMainWindow \
   D:/Qt/6.9.1/mingw_64/include/QtWidgets/QProgressBar \
+  D:/Qt/6.9.1/mingw_64/include/QtWidgets/QTableView \
   D:/Qt/6.9.1/mingw_64/include/QtWidgets/QWidget \
+  D:/Qt/6.9.1/mingw_64/include/QtWidgets/qabstractitemdelegate.h \
+  D:/Qt/6.9.1/mingw_64/include/QtWidgets/qabstractitemview.h \
+  D:/Qt/6.9.1/mingw_64/include/QtWidgets/qabstractscrollarea.h \
+  D:/Qt/6.9.1/mingw_64/include/QtWidgets/qabstractslider.h \
+  D:/Qt/6.9.1/mingw_64/include/QtWidgets/qabstractspinbox.h \
   D:/Qt/6.9.1/mingw_64/include/QtWidgets/qframe.h \
   D:/Qt/6.9.1/mingw_64/include/QtWidgets/qmainwindow.h \
   D:/Qt/6.9.1/mingw_64/include/QtWidgets/qprogressbar.h \
+  D:/Qt/6.9.1/mingw_64/include/QtWidgets/qrubberband.h \
   D:/Qt/6.9.1/mingw_64/include/QtWidgets/qsizepolicy.h \
+  D:/Qt/6.9.1/mingw_64/include/QtWidgets/qslider.h \
+  D:/Qt/6.9.1/mingw_64/include/QtWidgets/qstyle.h \
+  D:/Qt/6.9.1/mingw_64/include/QtWidgets/qstyleoption.h \
+  D:/Qt/6.9.1/mingw_64/include/QtWidgets/qtabbar.h \
+  D:/Qt/6.9.1/mingw_64/include/QtWidgets/qtableview.h \
   D:/Qt/6.9.1/mingw_64/include/QtWidgets/qtabwidget.h \
   D:/Qt/6.9.1/mingw_64/include/QtWidgets/qtwidgets-config.h \
   D:/Qt/6.9.1/mingw_64/include/QtWidgets/qtwidgetsexports.h \

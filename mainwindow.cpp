@@ -106,6 +106,24 @@ void MainWindow::setupContextMenu()
             this, &MainWindow::showContextMenu);
 }
 
+void MainWindow::initPathMemory()
+{
+    // 加载保存的路径
+    QSettings settings;
+    m_lastOutputPath = settings.value("LastOutputPath",
+                                      QStandardPaths::writableLocation(QStandardPaths::DownloadLocation)).toString();
+
+    // 设置到UI
+    ui->outputAdd_Edit->setText(m_lastOutputPath);
+
+    // 如果没有保存的路径，使用默认路径
+    if (m_lastVideoPath.isEmpty()) m_lastVideoPath = QDir::homePath();
+    if (m_lastAudioPath.isEmpty()) m_lastAudioPath = QDir::homePath();
+    if (m_lastOutputPath.isEmpty()) m_lastOutputPath = QStandardPaths::writableLocation(QStandardPaths::DownloadLocation);
+    if (m_lastTitleFolderPath.isEmpty()) m_lastTitleFolderPath = QDir::homePath();
+}
+
+
 // ===================== 表格数据处理函数 =====================
 void MainWindow::updateTableHeaders()
 {
@@ -216,6 +234,27 @@ void MainWindow::clearModelData()
     updateTableHeaders();
 }
 
+// ===================== 路径记忆和设置 =====================
+void MainWindow::loadPathSettings()
+{
+    QSettings settings;
+    m_lastVideoPath = settings.value("Last/VideoPath", QDir::homePath()).toString();
+    m_lastAudioPath = settings.value("Last/AudioPath", QDir::homePath()).toString();
+    m_lastOutputPath = settings.value("Last/OutputPath",
+                                      QStandardPaths::writableLocation(QStandardPaths::DownloadLocation)).toString();
+    m_lastTitleFolderPath = settings.value("Last/TitleFolderPath", QDir::homePath()).toString();
+}
+
+void MainWindow::savePathSettings()
+{
+    QSettings settings;
+    settings.setValue("Last/VideoPath", m_lastVideoPath);
+    settings.setValue("Last/AudioPath", m_lastAudioPath);
+    settings.setValue("Last/OutputPath", m_lastOutputPath);
+    settings.setValue("Last/TitleFolderPath", m_lastTitleFolderPath);
+}
+
+
 // ===================== 主按钮功能 =====================
 void MainWindow::on_singleline_importButton_clicked()
 {
@@ -296,6 +335,103 @@ void MainWindow::on_delelineButton_clicked()
     }
 }
 
+//打开文件浏览器，设置输出地址
+void MainWindow::on_outputButton_clicked()
+{
+    // 打开文件夹选择对话框
+    QString outputDir = QFileDialog::getExistingDirectory(
+        this,
+        tr("选择输出目录"),
+        m_lastOutputPath,  // 使用上次的路径
+        QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks
+        );
+
+    // 检查是否选择了有效目录
+    if (!outputDir.isEmpty()) {
+        // 将选择的路径设置到输出地址编辑框
+        ui->outputAdd_Edit->setText(outputDir);
+
+        // 更新路径记忆
+        m_lastOutputPath = outputDir;
+        savePathSettings();
+    }
+}
+
+void MainWindow::on_mergeStartBtn_clicked()
+{
+    if (m_exportInProgress) return;
+    m_exportInProgress = true;
+    m_failedCount = 0;
+
+    // 清空处理队列
+    m_processingItems.clear();
+    m_pendingItems.clear();
+
+    // 根据导出模式确定要处理的项
+    if (m_rememberExportChoice) {
+        // 使用记住的导出模式
+        switch(m_exportMode) {
+        case ExportSingle:
+            if (!m_videoItems.isEmpty()) {
+                m_pendingItems.append(m_videoItems.first());
+            }
+            break;
+        case ExportSelected:
+        {
+            QModelIndexList selected = ui->MaintableView->selectionModel()->selectedRows();
+            for (const QModelIndex &index : selected) {
+                if (index.row() < m_videoItems.size()) {
+                    m_pendingItems.append(m_videoItems[index.row()]);
+                }
+            }
+            break;
+        }
+        case ExportAll:
+            m_pendingItems = m_videoItems;
+            break;
+        }
+    } else {
+        // 弹出导出设置对话框
+        export_setting_dialog dialog(this, m_exportMode, m_rememberExportChoice);
+        dialog.setWindowTitle(tr("生成模式设置"));
+
+        if (dialog.exec() == QDialog::Accepted) {
+            ExportMode newMode = dialog.getExportMode();
+            bool remember = dialog.rememberChoice();
+
+            setExportSettingsSessionOnly(newMode, remember);
+
+            // 根据选择的模式添加项目到待处理列表
+            switch(newMode) {
+            case ExportSingle:
+                if (!m_videoItems.isEmpty()) {
+                    m_pendingItems.append(m_videoItems.first());
+                }
+                break;
+            case ExportSelected:
+            {
+                QModelIndexList selected = ui->MaintableView->selectionModel()->selectedRows();
+                for (const QModelIndex &index : selected) {
+                    if (index.row() < m_videoItems.size()) {
+                        m_pendingItems.append(m_videoItems[index.row()]);
+                    }
+                }
+                break;
+            }
+            case ExportAll:
+                m_pendingItems = m_videoItems;
+                break;
+            }
+        } else {
+            m_exportInProgress = false;
+            return; // 用户取消
+        }
+    }
+
+    // 开始处理
+    startMergingProcess();
+}
+
 // ===================== 删除操作管理 =====================
 void MainWindow::performDeleteOperation(DeleteMode mode)
 {
@@ -341,147 +477,8 @@ void MainWindow::setDeleteSettings(DeleteMode mode, bool remember)
     settings.setValue("delete/mode", static_cast<int>(mode));
 }
 
-// ===================== 上下文菜单处理 =====================
-void MainWindow::showContextMenu(const QPoint &pos)
-{
-    QModelIndex index = ui->MaintableView->indexAt(pos);
-    if (!index.isValid()) return;
 
-    QMenu menu(this);
-
-    // ===================== 功能组 =====================
-    QAction *properties = menu.addAction("属性");
-    QAction *preview = menu.addAction("预览");
-    QAction *openFolder = menu.addAction("打开所在文件夹");
-    menu.addSeparator(); // 功能组后的分隔线
-
-    // ===================== 删除组 =====================
-    QAction *deleteCurrent = menu.addAction("删除该行");
-    QAction *deleteSelected = menu.addAction("删除选中项");
-    QAction *deleteAll = menu.addAction("删除所有行");
-    menu.addSeparator(); // 删除组后的分隔线
-
-    // ===================== 导入组 =====================
-    // 修复列类型判断逻辑
-    TableColumns column = COL_INDEX;
-    if (index.column() >=0 && index.column() < m_currentColumnsOrder.size()) {
-        column = m_currentColumnsOrder[index.column()];
-    }
-
-    QAction *importFile = menu.addAction("导入...");
-    importFile->setData("import_file");
-    importFile->setEnabled(column == COL_VIDEO_FILE || column == COL_AUDIO_FILE);
-
-    QAction *importTitle = menu.addAction("导入标题文件夹");
-    importTitle->setData("import_title");
-    QAction *importSource = menu.addAction("导入缓存源文件");
-    importSource->setData("import_source");
-    menu.addSeparator(); // 导入组后的分隔线
-
-    // ===================== 导出组 =====================
-    QAction *exportSingle = menu.addAction("导出该项");
-    QAction *exportSelected = menu.addAction("导出选中项");
-    QAction *exportAll = menu.addAction("导出全部");
-    menu.addSeparator(); // 导出组后的分隔线
-
-    // 连接预览操作
-    connect(preview, &QAction::triggered, this, [this, index]() {
-        onPreviewAction(index.row());
-    });
-
-    // 连接删除操作（原代码）
-    connect(deleteCurrent, &QAction::triggered, this, [this, index]() {
-        int row = index.row();
-        if (row >= 0 && row < m_videoItems.size()) {
-            delete m_videoItems.takeAt(row);
-            m_tableModel->removeRow(row);
-            updateRowNumbers();
-        }
-    });
-
-    connect(deleteSelected, &QAction::triggered, this, [this]() {
-        performDeleteOperation(DeleteSelected);
-    });
-
-    connect(deleteAll, &QAction::triggered, this, [this]() {
-        performDeleteOperation(DeleteAll);
-    });
-
-    // 连接导入操作（原代码）
-    connect(&menu, &QMenu::triggered, this, &MainWindow::onCustomContextMenuAction);
-
-    // 连接导出操作（新增）
-    connect(exportSingle, &QAction::triggered, this, &MainWindow::onExportSingle);
-    connect(exportSelected, &QAction::triggered, this, &MainWindow::onExportSelected);
-    connect(exportAll, &QAction::triggered, this, &MainWindow::onExportAll);
-
-    menu.exec(ui->MaintableView->viewport()->mapToGlobal(pos));
-}
-
-void MainWindow::onPreviewAction(int row)
-{
-    if (row < 0 || row >= m_videoItems.size()) {
-        QMessageBox::warning(this, "预览", "无效的行索引");
-        return;
-    }
-
-    // 如果预览窗口已经存在，先删除
-    if (m_playbackWidget) {
-        delete m_playbackWidget;
-        m_playbackWidget = nullptr;
-    }
-
-    // 创建新的预览窗口
-    m_playbackWidget = new Playback_Widge(this);
-
-    // 使用 data(COL_TITLE) 方法获取标题
-    QString title = m_videoItems[row]->data(COL_TITLE).toString();
-    m_playbackWidget->setWindowTitle("视频预览 - " + title);
-
-    m_playbackWidget->setWindowFlags(Qt::Window);
-    m_playbackWidget->show();
-
-    // 这里可以添加代码将选中的视频项数据传递给预览窗口
-    // 例如：m_playbackWidget->setVideoItem(m_videoItems[row]);
-}
-
-
-void MainWindow::onCustomContextMenuAction(QAction* action)
-{
-    QString actionType = action->data().toString();
-    if (actionType == "import_file") {
-        // 处理导入单独文件
-    } else if (actionType == "import_title") {
-        // 处理导入标题文件夹
-    } else if (actionType == "import_source") {
-        on_wholsoueflie_importButton_clicked();
-    }
-}
-
-
-//打开文件浏览器，设置输出地址
-void MainWindow::on_outputButton_clicked()
-{
-    // 打开文件夹选择对话框
-    QString outputDir = QFileDialog::getExistingDirectory(
-        this,
-        tr("选择输出目录"),
-        m_lastOutputPath,  // 使用上次的路径
-        QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks
-        );
-
-    // 检查是否选择了有效目录
-    if (!outputDir.isEmpty()) {
-        // 将选择的路径设置到输出地址编辑框
-        ui->outputAdd_Edit->setText(outputDir);
-
-        // 更新路径记忆
-        m_lastOutputPath = outputDir;
-        savePathSettings();
-    }
-}
-
-
+// ===================== 导出操作管理 =====================
 // 在 mainwindow.cpp 中添加实现
 void MainWindow::onExportSingle()
 {
@@ -611,8 +608,6 @@ void MainWindow::updateExportStatusDisplay()
     // ui->exportStatusLabel->setText(status);
 }
 
-
-
 // 添加执行导出操作的方法
 void MainWindow::performExportOperation(ExportMode mode)
 {
@@ -629,81 +624,17 @@ void MainWindow::performExportOperation(ExportMode mode)
     }
 }
 
-void MainWindow::on_mergeStartBtn_clicked()
+void MainWindow::setExportSettingsSessionOnly(ExportMode mode, bool remember)
 {
-    if (m_exportInProgress) return;
-    m_exportInProgress = true;
-    m_failedCount = 0;
+    m_exportMode = mode;
+    m_rememberExportChoice = remember;
 
-    // 清空处理队列
-    m_processingItems.clear();
-    m_pendingItems.clear();
-
-    // 根据导出模式确定要处理的项
-    if (m_rememberExportChoice) {
-        // 使用记住的导出模式
-        switch(m_exportMode) {
-        case ExportSingle:
-            if (!m_videoItems.isEmpty()) {
-                m_pendingItems.append(m_videoItems.first());
-            }
-            break;
-        case ExportSelected:
-        {
-            QModelIndexList selected = ui->MaintableView->selectionModel()->selectedRows();
-            for (const QModelIndex &index : selected) {
-                if (index.row() < m_videoItems.size()) {
-                    m_pendingItems.append(m_videoItems[index.row()]);
-                }
-            }
-            break;
-        }
-        case ExportAll:
-            m_pendingItems = m_videoItems;
-            break;
-        }
-    } else {
-        // 弹出导出设置对话框
-        export_setting_dialog dialog(this, m_exportMode, m_rememberExportChoice);
-        dialog.setWindowTitle(tr("生成模式设置"));
-
-        if (dialog.exec() == QDialog::Accepted) {
-            ExportMode newMode = dialog.getExportMode();
-            bool remember = dialog.rememberChoice();
-
-            setExportSettingsSessionOnly(newMode, remember);
-
-            // 根据选择的模式添加项目到待处理列表
-            switch(newMode) {
-            case ExportSingle:
-                if (!m_videoItems.isEmpty()) {
-                    m_pendingItems.append(m_videoItems.first());
-                }
-                break;
-            case ExportSelected:
-            {
-                QModelIndexList selected = ui->MaintableView->selectionModel()->selectedRows();
-                for (const QModelIndex &index : selected) {
-                    if (index.row() < m_videoItems.size()) {
-                        m_pendingItems.append(m_videoItems[index.row()]);
-                    }
-                }
-                break;
-            }
-            case ExportAll:
-                m_pendingItems = m_videoItems;
-                break;
-            }
-        } else {
-            m_exportInProgress = false;
-            return; // 用户取消
-        }
-    }
-
-    // 开始处理
-    startMergingProcess();
+    // 注意：这里不保存到QSettings，只更新当前会话
+    updateExportStatusDisplay();
 }
 
+
+// ===================== 合并处理函数 =====================
 void MainWindow::startMergingProcess()
 {
     qDebug() << "开始混流过程，待处理项目数:" << m_pendingItems.size();
@@ -1021,29 +952,6 @@ void MainWindow::startFFmpegForItem(VideoItem* item)
             });
         }
     });
-
-
-
-}
-
-void MainWindow::finishMergingProcess()
-{
-    qDebug() << "完成混流过程，总项目数:" << m_videoItems.size() << "失败数:" << m_failedCount;
-
-    m_exportInProgress = false;
-
-    // 重置所有项目的错误状态
-    for (VideoItem* item : m_videoItems) {
-        item->setHasError(false);
-    }
-
-    // 显示完成消息
-    QString message = QString("混流完成! 成功: %1, 失败: %2")
-                          .arg(m_videoItems.size() - m_failedCount)
-                          .arg(m_failedCount);
-
-    qDebug() << "显示完成消息:" << message;
-    QMessageBox::information(this, "混流完成", message);
 }
 
 void MainWindow::parseFFmpegOutput(VideoItem* item, const QString& output)
@@ -1072,6 +980,25 @@ void MainWindow::parseFFmpegOutput(VideoItem* item, const QString& output)
     }
 }
 
+void MainWindow::finishMergingProcess()
+{
+    qDebug() << "完成混流过程，总项目数:" << m_videoItems.size() << "失败数:" << m_failedCount;
+
+    m_exportInProgress = false;
+
+    // 重置所有项目的错误状态
+    for (VideoItem* item : m_videoItems) {
+        item->setHasError(false);
+    }
+
+    // 显示完成消息
+    QString message = QString("混流完成! 成功: %1, 失败: %2")
+                          .arg(m_videoItems.size() - m_failedCount)
+                          .arg(m_failedCount);
+
+    qDebug() << "显示完成消息:" << message;
+    QMessageBox::information(this, "混流完成", message);
+}
 
 void MainWindow::updateTotalProgress()
 {
@@ -1099,15 +1026,122 @@ void MainWindow::updateTotalProgress()
 }
 
 
-
-void MainWindow::setExportSettingsSessionOnly(ExportMode mode, bool remember)
+// ===================== 上下文菜单处理 =====================
+void MainWindow::showContextMenu(const QPoint &pos)
 {
-    m_exportMode = mode;
-    m_rememberExportChoice = remember;
+    QModelIndex index = ui->MaintableView->indexAt(pos);
+    if (!index.isValid()) return;
 
-    // 注意：这里不保存到QSettings，只更新当前会话
-    updateExportStatusDisplay();
+    QMenu menu(this);
+
+    // ===================== 功能组 =====================
+    QAction *properties = menu.addAction("属性");
+    QAction *preview = menu.addAction("预览");
+    QAction *openFolder = menu.addAction("打开所在文件夹");
+    menu.addSeparator(); // 功能组后的分隔线
+
+    // ===================== 删除组 =====================
+    QAction *deleteCurrent = menu.addAction("删除该行");
+    QAction *deleteSelected = menu.addAction("删除选中项");
+    QAction *deleteAll = menu.addAction("删除所有行");
+    menu.addSeparator(); // 删除组后的分隔线
+
+    // ===================== 导入组 =====================
+    // 修复列类型判断逻辑
+    TableColumns column = COL_INDEX;
+    if (index.column() >=0 && index.column() < m_currentColumnsOrder.size()) {
+        column = m_currentColumnsOrder[index.column()];
+    }
+
+    QAction *importFile = menu.addAction("导入...");
+    importFile->setData("import_file");
+    importFile->setEnabled(column == COL_VIDEO_FILE || column == COL_AUDIO_FILE);
+
+    QAction *importTitle = menu.addAction("导入标题文件夹");
+    importTitle->setData("import_title");
+    QAction *importSource = menu.addAction("导入缓存源文件");
+    importSource->setData("import_source");
+    menu.addSeparator(); // 导入组后的分隔线
+
+    // ===================== 导出组 =====================
+    QAction *exportSingle = menu.addAction("导出该项");
+    QAction *exportSelected = menu.addAction("导出选中项");
+    QAction *exportAll = menu.addAction("导出全部");
+    menu.addSeparator(); // 导出组后的分隔线
+
+    // 连接预览操作
+    connect(preview, &QAction::triggered, this, [this, index]() {
+        onPreviewAction(index.row());
+    });
+
+    // 连接删除操作（原代码）
+    connect(deleteCurrent, &QAction::triggered, this, [this, index]() {
+        int row = index.row();
+        if (row >= 0 && row < m_videoItems.size()) {
+            delete m_videoItems.takeAt(row);
+            m_tableModel->removeRow(row);
+            updateRowNumbers();
+        }
+    });
+
+    connect(deleteSelected, &QAction::triggered, this, [this]() {
+        performDeleteOperation(DeleteSelected);
+    });
+
+    connect(deleteAll, &QAction::triggered, this, [this]() {
+        performDeleteOperation(DeleteAll);
+    });
+
+    // 连接导入操作（原代码）
+    connect(&menu, &QMenu::triggered, this, &MainWindow::onCustomContextMenuAction);
+
+    // 连接导出操作（新增）
+    connect(exportSingle, &QAction::triggered, this, &MainWindow::onExportSingle);
+    connect(exportSelected, &QAction::triggered, this, &MainWindow::onExportSelected);
+    connect(exportAll, &QAction::triggered, this, &MainWindow::onExportAll);
+
+    menu.exec(ui->MaintableView->viewport()->mapToGlobal(pos));
 }
+
+void MainWindow::onPreviewAction(int row)
+{
+    if (row < 0 || row >= m_videoItems.size()) {
+        QMessageBox::warning(this, "预览", "无效的行索引");
+        return;
+    }
+
+    // 如果预览窗口已经存在，先删除
+    if (m_playbackWidget) {
+        delete m_playbackWidget;
+        m_playbackWidget = nullptr;
+    }
+
+    // 创建新的预览窗口
+    m_playbackWidget = new Playback_Widge(this);
+
+    // 使用 data(COL_TITLE) 方法获取标题
+    QString title = m_videoItems[row]->data(COL_TITLE).toString();
+    m_playbackWidget->setWindowTitle("视频预览 - " + title);
+
+    m_playbackWidget->setWindowFlags(Qt::Window);
+    m_playbackWidget->show();
+
+    // 这里可以添加代码将选中的视频项数据传递给预览窗口
+    // 例如：m_playbackWidget->setVideoItem(m_videoItems[row]);
+}
+
+void MainWindow::onCustomContextMenuAction(QAction* action)
+{
+    QString actionType = action->data().toString();
+    if (actionType == "import_file") {
+        // 处理导入单独文件
+    } else if (actionType == "import_title") {
+        // 处理导入标题文件夹
+    } else if (actionType == "import_source") {
+        on_wholsoueflie_importButton_clicked();
+    }
+}
+
 
 // ===================== 处理导入数据 =====================
 void MainWindow::handleImportData(const QString& videoPath, const QString& audioPath, const QString& title)
@@ -1188,40 +1222,4 @@ void MainWindow::handleImportData(const QString& videoPath, const QString& audio
 
         ffmpegProcess->start("ffmpeg", args);
     }
-}
-
-void MainWindow::initPathMemory()
-{
-    // 加载保存的路径
-    QSettings settings;
-    m_lastOutputPath = settings.value("LastOutputPath",
-                                      QStandardPaths::writableLocation(QStandardPaths::DownloadLocation)).toString();
-
-    // 设置到UI
-    ui->outputAdd_Edit->setText(m_lastOutputPath);
-
-    // 如果没有保存的路径，使用默认路径
-    if (m_lastVideoPath.isEmpty()) m_lastVideoPath = QDir::homePath();
-    if (m_lastAudioPath.isEmpty()) m_lastAudioPath = QDir::homePath();
-    if (m_lastOutputPath.isEmpty()) m_lastOutputPath = QStandardPaths::writableLocation(QStandardPaths::DownloadLocation);
-    if (m_lastTitleFolderPath.isEmpty()) m_lastTitleFolderPath = QDir::homePath();
-}
-
-void MainWindow::loadPathSettings()
-{
-    QSettings settings;
-    m_lastVideoPath = settings.value("Last/VideoPath", QDir::homePath()).toString();
-    m_lastAudioPath = settings.value("Last/AudioPath", QDir::homePath()).toString();
-    m_lastOutputPath = settings.value("Last/OutputPath",
-                                      QStandardPaths::writableLocation(QStandardPaths::DownloadLocation)).toString();
-    m_lastTitleFolderPath = settings.value("Last/TitleFolderPath", QDir::homePath()).toString();
-}
-
-void MainWindow::savePathSettings()
-{
-    QSettings settings;
-    settings.setValue("Last/VideoPath", m_lastVideoPath);
-    settings.setValue("Last/AudioPath", m_lastAudioPath);
-    settings.setValue("Last/OutputPath", m_lastOutputPath);
-    settings.setValue("Last/TitleFolderPath", m_lastTitleFolderPath);
 }

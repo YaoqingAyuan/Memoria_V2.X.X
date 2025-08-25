@@ -10,7 +10,7 @@ class MergeManager : public QObject
 {
     Q_OBJECT
 public:
-     explicit MergeManager(QObject* parent = nullptr); // 修正构造函数声明
+    explicit MergeManager(QObject* parent = nullptr);
 
     void startMergingProcess(const QList<VideoItem*>& items, const QString& outputPath);
     void stopMerging();
@@ -21,6 +21,8 @@ signals:
     void errorOccurred(const QString& error);
     void itemProgressChanged(VideoItem* item, int progress);
     void totalProgressChanged(int progress);
+    // 添加 infoMessage 信号
+    void infoMessage(const QString& message);
 
 private slots:
     void processNextItem();
@@ -29,14 +31,17 @@ private slots:
     void finishMergingProcess();
 
 private:
+    int extractProgress(const QString& output); // 声明进度解析函数
+
     QList<VideoItem*> m_processingItems;
     QList<VideoItem*> m_pendingItems;
     int m_failedCount = 0;
+    int m_totalItems = 0; // 添加总项目数成员
     int m_maxConcurrentProcesses = 3;
     bool m_exportInProgress = false;
     QString m_outputPath;
-    int calculateTotalProgress(); // 添加这行
 
+    int calculateTotalProgress();
 };
 
 #endif // MERGEMANAGER_H

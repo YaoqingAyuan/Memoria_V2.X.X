@@ -3455,6 +3455,11 @@ D:/Qt Projects/MemoriaV2/mainwindow.h
  mdp:D:/Qt/Tools/mingw1310_64/x86_64-w64-mingw32/include/time.h
  mdp:D:/Qt/Tools/mingw1310_64/x86_64-w64-mingw32/include/vadefs.h
  mdp:D:/Qt/Tools/mingw1310_64/x86_64-w64-mingw32/include/wchar.h
+D:/Qt Projects/MemoriaV2/dialogs/singleline_import_dialog.cpp
+ uic:dialogs/ui_singleline_import_dialog.h
+D:/Qt Projects/MemoriaV2/dialogs/del_setting_dialog.cpp
+ uic:dialogs/ui_del_setting_dialog.h
+D:/Qt Projects/MemoriaV2/managers/contextmenumanager.h
 D:/Qt Projects/MemoriaV2/managers/mergemanager.h
  mmc:Q_OBJECT
  mdp:D:/Qt Projects/MemoriaV2/build/Desktop_Qt_6_9_1_MinGW_64_bit-Debug/MemoriaV2_autogen/moc_predefs.h
@@ -3804,10 +3809,6 @@ D:/Qt Projects/MemoriaV2/managers/mergemanager.h
 D:/Qt Projects/MemoriaV2/data_models/tablecolumns.cpp
 D:/Qt Projects/MemoriaV2/data_models/tablemanager.cpp
 D:/Qt Projects/MemoriaV2/delegates/progressbardelegate.cpp
-D:/Qt Projects/MemoriaV2/dialogs/singleline_import_dialog.cpp
- uic:dialogs/ui_singleline_import_dialog.h
-D:/Qt Projects/MemoriaV2/dialogs/del_setting_dialog.cpp
- uic:dialogs/ui_del_setting_dialog.h
 D:/Qt Projects/MemoriaV2/playback_widge.cpp
  uic:ui_playback_widge.h
 D:/Qt Projects/MemoriaV2/dialogs/export_setting_dialog.cpp
@@ -3815,3 +3816,4 @@ D:/Qt Projects/MemoriaV2/dialogs/export_setting_dialog.cpp
 D:/Qt Projects/MemoriaV2/dialogs/setting_dialog.cpp
  uic:dialogs/ui_setting_dialog.h
 D:/Qt Projects/MemoriaV2/main.cpp
+D:/Qt Projects/MemoriaV2/managers/contextmenumanager.cpp

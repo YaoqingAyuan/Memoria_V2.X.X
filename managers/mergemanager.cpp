@@ -10,12 +10,18 @@
 
 MergeManager::MergeManager(QObject *parent) : QObject(parent)
 {
-    // 初始化代码
+    // 确保成员变量初始化
+    m_failedCount = 0;
+    m_totalItems = 0;
+    m_maxConcurrentProcesses = 3; // 按需调整
+    m_exportInProgress = false;
 }
 
 void MergeManager::startMergingProcess(const QList<VideoItem*>& items, const QString& outputPath)
 {
     qDebug() << "MergeManager::startMergingProcess - Starting merge process";
+    m_pendingItems = items;
+    m_totalItems = items.size(); // 记录总项目数
 
     m_pendingItems = items;
     m_outputPath = outputPath;
@@ -52,20 +58,23 @@ void MergeManager::processNextItem()
 
 void MergeManager::parseFFmpegOutput(VideoItem* item, const QString& output)
 {
-    qDebug() << "MergeManager::parseFFmpegOutput - Parsing output for item:"
-             << item->data(COL_TITLE).toString();
+    // 解析FFmpeg输出获取进度值...
+    int progress = extractProgress(output); // 需要实现这个函数
 
-    // 这里是您之前在 MainWindow 中的输出解析代码
-    // 需要将 MainWindow::parseFFmpegOutput 的实现移动到这里
+    // 更新项目进度
+    item->setProgress(progress);
+
+    // 更新总进度
+    emit totalProgressChanged(calculateTotalProgress());
 }
 
 void MergeManager::finishMergingProcess()
 {
     qDebug() << "MergeManager::finishMergingProcess - Finishing merge process";
-
     m_exportInProgress = false;
 
-    int successCount = m_pendingItems.size() + m_processingItems.size() - m_failedCount;
+    // 计算成功数量 = 总项目数 - 失败数
+    int successCount = m_totalItems - m_failedCount;
     emit mergingFinished(successCount, m_failedCount);
 }
 
@@ -122,6 +131,16 @@ void MergeManager::startFFmpegForItem(VideoItem* item)
                 emit errorOccurred("无法创建输出目录：" + outputPath);
             }
             return;
+        }
+    }
+
+    if (!outputDir.exists()) {
+        if (!outputDir.mkpath(".")) {
+            emit errorOccurred("无法创建输出目录：" + outputPath);
+            // ...错误处理...
+            return;
+        } else {
+            emit infoMessage("已自动创建输出目录：" + outputPath);
         }
     }
 
@@ -306,7 +325,25 @@ int MergeManager::calculateTotalProgress()
 
     int total = 0;
     for (VideoItem* item : m_processingItems) {
-        total += item->progress();
+        // 确保进度值在有效范围内
+        int progress = item->progress();
+        if (progress < 0) progress = 0;
+        if (progress > 100) progress = 100;
+        total += progress;
     }
     return total / m_processingItems.size();
+}
+
+// 在文件末尾添加进度解析函数实现
+int MergeManager::extractProgress(const QString& output)
+{
+    // 简单的进度解析示例（根据实际FFmpeg输出格式调整）
+    QRegularExpression re("time=(\\d+):(\\d+):(\\d+)\\.(\\d+)");
+    QRegularExpressionMatch match = re.match(output);
+
+    if (match.hasMatch()) {
+        // 这里简化处理：实际应转换为毫秒并与总时长比较
+        return 50; // 示例值，返回50%进度
+    }
+    return 0; // 默认返回0%
 }

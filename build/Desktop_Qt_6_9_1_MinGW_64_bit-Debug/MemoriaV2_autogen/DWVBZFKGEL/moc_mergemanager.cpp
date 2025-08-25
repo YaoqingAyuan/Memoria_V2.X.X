@@ -51,6 +51,8 @@ template <> constexpr inline auto MergeManager::qt_create_metaobjectdata<qt_meta
         "VideoItem*",
         "item",
         "totalProgressChanged",
+        "infoMessage",
+        "message",
         "processNextItem",
         "startFFmpegForItem",
         "parseFFmpegOutput",
@@ -79,18 +81,22 @@ template <> constexpr inline auto MergeManager::qt_create_metaobjectdata<qt_meta
         QtMocHelpers::SignalData<void(int)>(12, 2, QMC::AccessPublic, QMetaType::Void, {{
             { QMetaType::Int, 3 },
         }}),
+        // Signal 'infoMessage'
+        QtMocHelpers::SignalData<void(const QString &)>(13, 2, QMC::AccessPublic, QMetaType::Void, {{
+            { QMetaType::QString, 14 },
+        }}),
         // Slot 'processNextItem'
-        QtMocHelpers::SlotData<void()>(13, 2, QMC::AccessPrivate, QMetaType::Void),
+        QtMocHelpers::SlotData<void()>(15, 2, QMC::AccessPrivate, QMetaType::Void),
         // Slot 'startFFmpegForItem'
-        QtMocHelpers::SlotData<void(VideoItem *)>(14, 2, QMC::AccessPrivate, QMetaType::Void, {{
+        QtMocHelpers::SlotData<void(VideoItem *)>(16, 2, QMC::AccessPrivate, QMetaType::Void, {{
             { 0x80000000 | 10, 11 },
         }}),
         // Slot 'parseFFmpegOutput'
-        QtMocHelpers::SlotData<void(VideoItem *, const QString &)>(15, 2, QMC::AccessPrivate, QMetaType::Void, {{
-            { 0x80000000 | 10, 11 }, { QMetaType::QString, 16 },
+        QtMocHelpers::SlotData<void(VideoItem *, const QString &)>(17, 2, QMC::AccessPrivate, QMetaType::Void, {{
+            { 0x80000000 | 10, 11 }, { QMetaType::QString, 18 },
         }}),
         // Slot 'finishMergingProcess'
-        QtMocHelpers::SlotData<void()>(17, 2, QMC::AccessPrivate, QMetaType::Void),
+        QtMocHelpers::SlotData<void()>(19, 2, QMC::AccessPrivate, QMetaType::Void),
     };
     QtMocHelpers::UintData qt_properties {
     };
@@ -119,10 +125,11 @@ void MergeManager::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id
         case 2: _t->errorOccurred((*reinterpret_cast< std::add_pointer_t<QString>>(_a[1]))); break;
         case 3: _t->itemProgressChanged((*reinterpret_cast< std::add_pointer_t<VideoItem*>>(_a[1])),(*reinterpret_cast< std::add_pointer_t<int>>(_a[2]))); break;
         case 4: _t->totalProgressChanged((*reinterpret_cast< std::add_pointer_t<int>>(_a[1]))); break;
-        case 5: _t->processNextItem(); break;
-        case 6: _t->startFFmpegForItem((*reinterpret_cast< std::add_pointer_t<VideoItem*>>(_a[1]))); break;
-        case 7: _t->parseFFmpegOutput((*reinterpret_cast< std::add_pointer_t<VideoItem*>>(_a[1])),(*reinterpret_cast< std::add_pointer_t<QString>>(_a[2]))); break;
-        case 8: _t->finishMergingProcess(); break;
+        case 5: _t->infoMessage((*reinterpret_cast< std::add_pointer_t<QString>>(_a[1]))); break;
+        case 6: _t->processNextItem(); break;
+        case 7: _t->startFFmpegForItem((*reinterpret_cast< std::add_pointer_t<VideoItem*>>(_a[1]))); break;
+        case 8: _t->parseFFmpegOutput((*reinterpret_cast< std::add_pointer_t<VideoItem*>>(_a[1])),(*reinterpret_cast< std::add_pointer_t<QString>>(_a[2]))); break;
+        case 9: _t->finishMergingProcess(); break;
         default: ;
         }
     }
@@ -136,14 +143,14 @@ void MergeManager::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id
                 *reinterpret_cast<QMetaType *>(_a[0]) = QMetaType::fromType< VideoItem* >(); break;
             }
             break;
-        case 6:
+        case 7:
             switch (*reinterpret_cast<int*>(_a[1])) {
             default: *reinterpret_cast<QMetaType *>(_a[0]) = QMetaType(); break;
             case 0:
                 *reinterpret_cast<QMetaType *>(_a[0]) = QMetaType::fromType< VideoItem* >(); break;
             }
             break;
-        case 7:
+        case 8:
             switch (*reinterpret_cast<int*>(_a[1])) {
             default: *reinterpret_cast<QMetaType *>(_a[0]) = QMetaType(); break;
             case 0:
@@ -162,6 +169,8 @@ void MergeManager::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id
         if (QtMocHelpers::indexOfMethod<void (MergeManager::*)(VideoItem * , int )>(_a, &MergeManager::itemProgressChanged, 3))
             return;
         if (QtMocHelpers::indexOfMethod<void (MergeManager::*)(int )>(_a, &MergeManager::totalProgressChanged, 4))
+            return;
+        if (QtMocHelpers::indexOfMethod<void (MergeManager::*)(const QString & )>(_a, &MergeManager::infoMessage, 5))
             return;
     }
 }
@@ -185,14 +194,14 @@ int MergeManager::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 9)
+        if (_id < 10)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 9;
+        _id -= 10;
     }
     if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 9)
+        if (_id < 10)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 9;
+        _id -= 10;
     }
     return _id;
 }
@@ -225,5 +234,11 @@ void MergeManager::itemProgressChanged(VideoItem * _t1, int _t2)
 void MergeManager::totalProgressChanged(int _t1)
 {
     QMetaObject::activate<void>(this, &staticMetaObject, 4, nullptr, _t1);
+}
+
+// SIGNAL 5
+void MergeManager::infoMessage(const QString & _t1)
+{
+    QMetaObject::activate<void>(this, &staticMetaObject, 5, nullptr, _t1);
 }
 QT_WARNING_POP

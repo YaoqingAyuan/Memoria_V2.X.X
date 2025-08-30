@@ -30,7 +30,7 @@ MainWindow::MainWindow(QWidget *parent)
     qDebug() << "UI setup start";
     ui->setupUi(this);
     qDebug() << "UI setup done. MaintableView:" << ui->MaintableView;
-    this->setWindowTitle("Memoria V2.3.11");
+    this->setWindowTitle("Memoria V2.4.0");
 
     // 检查关键UI组件
     if (!ui->MaintableView) {

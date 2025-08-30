@@ -21,3 +21,24 @@
 6	1724	7778259204739589	build.ninja	680349b823a9beb9
 5	164	7782396617478367	CMakeFiles/clean.additional	adcc2f785672e3a3
 165	298	7782396619073735	clean	101d0f6048d5fe99
+6	186	7782542874356938	CMakeFiles/clean.additional	adcc2f785672e3a3
+186	492	7782542876157404	clean	101d0f6048d5fe99
+10	3020	7782542910577187	MemoriaV2_autogen/timestamp	ab33f55fd23bdcd2
+10	3020	7782542910577187	MemoriaV2_autogen/mocs_compilation.cpp	ab33f55fd23bdcd2
+10	3020	7782542910577187	D:/Qt Projects/MemoriaV2/build/Desktop_Qt_6_9_1_MinGW_64_bit-Debug/MemoriaV2_autogen/timestamp	ab33f55fd23bdcd2
+10	3020	7782542910577187	D:/Qt Projects/MemoriaV2/build/Desktop_Qt_6_9_1_MinGW_64_bit-Debug/MemoriaV2_autogen/mocs_compilation.cpp	ab33f55fd23bdcd2
+3092	5648	7782542912617523	CMakeFiles/MemoriaV2.dir/main.cpp.obj	ac7fa80eebccc52
+3304	5649	7782542914743037	CMakeFiles/MemoriaV2.dir/playback_widge.cpp.obj	21bc6f096d6a9426
+3021	5709	7782542911902344	CMakeFiles/MemoriaV2.dir/MemoriaV2_autogen/mocs_compilation.cpp.obj	d3151ef09b5a8b63
+3851	5957	7782542920201088	CMakeFiles/MemoriaV2.dir/data_models/tablecolumns.cpp.obj	47553b585894d6b6
+3996	6261	7782542921654954	CMakeFiles/MemoriaV2.dir/data_models/videoitem.cpp.obj	378fd0278dbc4f83
+3411	6454	7782542915813238	CMakeFiles/MemoriaV2.dir/dialogs/setting_dialog.cpp.obj	ca270fcf568760c6
+3693	6472	7782542918634948	CMakeFiles/MemoriaV2.dir/dialogs/singleline_import_dialog.cpp.obj	86d04c67f2109754
+3181	6558	7782542913510524	CMakeFiles/MemoriaV2.dir/mainwindow.cpp.obj	a55af5fe558d8ffc
+4219	6605	7782542923895689	CMakeFiles/MemoriaV2.dir/delegates/progressbardelegate.cpp.obj	88953960b29f7483
+4418	6714	7782542925878639	CMakeFiles/MemoriaV2.dir/dialogs/del_setting_dialog.cpp.obj	41f114b5b96540a2
+4620	6875	7782542927897298	CMakeFiles/MemoriaV2.dir/dialogs/export_setting_dialog.cpp.obj	76ba6875004e5302
+4831	7835	7782542930007867	CMakeFiles/MemoriaV2.dir/data_models/tablemanager.cpp.obj	8f3de1246a510203
+5405	7929	7782542935757985	CMakeFiles/MemoriaV2.dir/managers/contextmenumanager.cpp.obj	36ee7d81a67f704f
+5095	7962	7782542932643212	CMakeFiles/MemoriaV2.dir/managers/mergemanager.cpp.obj	1fd57853688b589f
+7962	9679	7782542961323015	MemoriaV2.exe	fb3854f6f787dcee

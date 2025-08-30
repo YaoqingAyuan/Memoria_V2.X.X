@@ -1,0 +1,23 @@
+# ninja log v6
+9	3091	7782396653931816	MemoriaV2_autogen/timestamp	ab33f55fd23bdcd2
+9	3091	7782396653931816	MemoriaV2_autogen/mocs_compilation.cpp	ab33f55fd23bdcd2
+9	3091	7782396653931816	D:/Qt Projects/MemoriaV2/build/Desktop_Qt_6_9_1_MinGW_64_bit-Debug/MemoriaV2_autogen/mocs_compilation.cpp	ab33f55fd23bdcd2
+3092	5916	7782396655690594	CMakeFiles/MemoriaV2.dir/MemoriaV2_autogen/mocs_compilation.cpp.obj	d3151ef09b5a8b63
+5449	8119	7782396679262220	CMakeFiles/MemoriaV2.dir/managers/contextmenumanager.cpp.obj	36ee7d81a67f704f
+9	3091	7782396653931816	D:/Qt Projects/MemoriaV2/build/Desktop_Qt_6_9_1_MinGW_64_bit-Debug/MemoriaV2_autogen/timestamp	ab33f55fd23bdcd2
+3552	5649	7782396660291513	CMakeFiles/MemoriaV2.dir/playback_widge.cpp.obj	21bc6f096d6a9426
+3214	5649	7782396656902769	CMakeFiles/MemoriaV2.dir/main.cpp.obj	ac7fa80eebccc52
+4043	6042	7782396665210528	CMakeFiles/MemoriaV2.dir/data_models/tablecolumns.cpp.obj	47553b585894d6b6
+4579	6820	7782396670565434	CMakeFiles/MemoriaV2.dir/dialogs/del_setting_dialog.cpp.obj	41f114b5b96540a2
+3663	6669	7782396661404627	CMakeFiles/MemoriaV2.dir/dialogs/setting_dialog.cpp.obj	ca270fcf568760c6
+4171	6562	7782396666493570	CMakeFiles/MemoriaV2.dir/data_models/videoitem.cpp.obj	378fd0278dbc4f83
+3788	6694	7782396662644488	CMakeFiles/MemoriaV2.dir/dialogs/singleline_import_dialog.cpp.obj	86d04c67f2109754
+4392	6785	7782396668701140	CMakeFiles/MemoriaV2.dir/delegates/progressbardelegate.cpp.obj	88953960b29f7483
+4755	7001	7782396672328779	CMakeFiles/MemoriaV2.dir/dialogs/export_setting_dialog.cpp.obj	76ba6875004e5302
+3399	6682	7782396658743286	CMakeFiles/MemoriaV2.dir/mainwindow.cpp.obj	a55af5fe558d8ffc
+4940	7832	7782396674170011	CMakeFiles/MemoriaV2.dir/data_models/tablemanager.cpp.obj	8f3de1246a510203
+5134	8127	7782396676108446	CMakeFiles/MemoriaV2.dir/managers/mergemanager.cpp.obj	1fd57853688b589f
+8127	9642	7782396706044353	MemoriaV2.exe	fb3854f6f787dcee
+6	1724	7778259204739589	build.ninja	680349b823a9beb9
+5	164	7782396617478367	CMakeFiles/clean.additional	adcc2f785672e3a3
+165	298	7782396619073735	clean	101d0f6048d5fe99
